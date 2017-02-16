@@ -9,3 +9,18 @@ textarea {
    
 }
 
+.gold{
+    color:gold;
+}
+
+.silver{
+    color:silver;
+}
+
+.bronze{
+    color:darkgoldenrod;
+}
+
+.stat-card{
+    min-width: 315px;
+}

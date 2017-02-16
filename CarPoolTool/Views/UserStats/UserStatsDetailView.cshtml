@@ -1,39 +1,61 @@
 ﻿@model CarPoolTool.Models.UserTotal
 
 
-<div class="ui card">
+<div class="ui card stat-card">
     <div class="content">
-        <i class="right floated ui blue user icon"></i>
+        @{ 
+            string icon = null;
+            if (ViewData.ContainsKey("rank"))
+            {
+                switch ((int)ViewData["rank"])
+                {
+                    case 1:
+                        icon = "gold trophy";
+                        break;
+                    case 2:
+                        icon = "silver trophy";
+                        break;
+                    case 3:
+                        icon = "bronze trophy";
+                        break;
+                }
+            }
+        }
+
+        @if(icon != null)
+        {
+            <i class="right floated ui large @icon icon"></i>
+        }
         <div class="header">
             @Model.User.display_name
         </div>
         <div class="meta">
-            @Model.User.username
+            @@@Model.User.username
         </div>
         <div class="description">
-            <div class="ui three statistics">
-                <div class="tiny teal statistic">
+            <div class="ui three mini statistics">
+                <div class="teal statistic">
                     <div class="value">
                         <i class="car icon"></i> @Model.Total.driver_total
                     </div>
                     <div class="label">
-                        Ha guidato
+                        guidato
                     </div>
                 </div>
-                <div class="tiny blue statistic">
+                <div class="blue statistic">
                     <div class="value">
                         <i class="road icon"></i> @Model.Total.passenger_total
                     </div>
                     <div class="label">
-                        Ha viaggaito
+                        viaggiato
                     </div>
                 </div>
-                <div class="statistic">
+                <div class="red statistic">
                     <div class="value">
-                        <i class="line chart icon"></i> @((float)Model.Total.driver_total / (float)Model.Total.carpool_total)
+                        <i class="line chart icon"></i> @(((float)Model.Total.driver_total / (float)Model.Total.carpool_total).ToString("N2"))
                     </div>
                     <div class="label">
-                        Ratio guide/corse
+                        corse/guide
                     </div>
                 </div>
             </div>
