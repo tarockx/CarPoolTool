@@ -1,0 +1,43 @@
+﻿@model CarPoolTool.Models.UserTotal
+
+
+<div class="ui card">
+    <div class="content">
+        <i class="right floated ui blue user icon"></i>
+        <div class="header">
+            @Model.User.display_name
+        </div>
+        <div class="meta">
+            @Model.User.username
+        </div>
+        <div class="description">
+            <div class="ui three statistics">
+                <div class="tiny teal statistic">
+                    <div class="value">
+                        <i class="car icon"></i> @Model.Total.driver_total
+                    </div>
+                    <div class="label">
+                        Ha guidato
+                    </div>
+                </div>
+                <div class="tiny blue statistic">
+                    <div class="value">
+                        <i class="road icon"></i> @Model.Total.passenger_total
+                    </div>
+                    <div class="label">
+                        Ha viaggaito
+                    </div>
+                </div>
+                <div class="statistic">
+                    <div class="value">
+                        <i class="line chart icon"></i> @((float)Model.Total.driver_total / (float)Model.Total.carpool_total)
+                    </div>
+                    <div class="label">
+                        Ratio guide/corse
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

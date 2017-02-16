@@ -6,17 +6,7 @@
 
 <h2>Statistiche di partecipazione</h2>
 
-<table class="table">
-    <tr>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.ActionLink("Dettagli utente per " + item.User.display_name, "Details", item)
-        </td>
-    </tr>
+@foreach (var item in Model)
+{
+    @Html.Partial("UserStatsDetailView", item)
 }
-
-</table>
