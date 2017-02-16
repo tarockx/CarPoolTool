@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="CarPoolToolModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="CarpoolLog">
+          <Key>
+            <PropertyRef Name="username" />
+            <PropertyRef Name="data" />
+          </Key>
+          <Property Name="username" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="data" Type="date" Nullable="false" />
+          <Property Name="driver" Type="smallint" />
+          <Property Name="passenger" Type="smallint" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="username" />
+          </Key>
+          <Property Name="username" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="password" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="admin" Type="smallint" Nullable="false" />
+          <Property Name="display_name" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Totals">
+          <Key>
+            <PropertyRef Name="username" />
+          </Key>
+          <Property Name="username" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="passenger_total" Type="int" />
+          <Property Name="driver_total" Type="int" />
+          <Property Name="carpool_total" Type="int" />
+        </EntityType>
+        <Association Name="FK_CarpoolLog_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="CarpoolLog" Type="Self.CarpoolLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="username" />
+            </Principal>
+            <Dependent Role="CarpoolLog">
+              <PropertyRef Name="username" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="CarPoolToolModelStoreContainer">
+          <EntitySet Name="CarpoolLog" EntityType="Self.CarpoolLog" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Totals" EntityType="Self.Totals" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Totals].[username] AS [username], 
+    [Totals].[passenger_total] AS [passenger_total], 
+    [Totals].[driver_total] AS [driver_total], 
+    [Totals].[carpool_total] AS [carpool_total]
+    FROM [dbo].[Totals] AS [Totals]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_CarpoolLog_User" Association="Self.FK_CarpoolLog_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="CarpoolLog" EntitySet="CarpoolLog" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="CarPoolToolModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="CarpoolLog">
+          <Key>
+            <PropertyRef Name="username" />
+            <PropertyRef Name="data" />
+          </Key>
+          <Property Name="username" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="data" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="driver" Type="Int16" />
+          <Property Name="passenger" Type="Int16" />
+          <NavigationProperty Name="User" Relationship="Self.FK_CarpoolLog_User" FromRole="CarpoolLog" ToRole="User" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="username" />
+          </Key>
+          <Property Name="username" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="admin" Type="Int16" Nullable="false" />
+          <Property Name="display_name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="CarpoolLogs" Relationship="Self.FK_CarpoolLog_User" FromRole="User" ToRole="CarpoolLog" />
+        </EntityType>
+        <EntityType Name="Total">
+          <Key>
+            <PropertyRef Name="username" />
+          </Key>
+          <Property Name="username" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="passenger_total" Type="Int32" />
+          <Property Name="driver_total" Type="Int32" />
+          <Property Name="carpool_total" Type="Int32" />
+        </EntityType>
+        <Association Name="FK_CarpoolLog_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="CarpoolLog" Type="Self.CarpoolLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="username" />
+            </Principal>
+            <Dependent Role="CarpoolLog">
+              <PropertyRef Name="username" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="CarPoolToolEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="CarpoolLogs" EntityType="Self.CarpoolLog" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <EntitySet Name="Totals" EntityType="Self.Total" />
+          <AssociationSet Name="FK_CarpoolLog_User" Association="Self.FK_CarpoolLog_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="CarpoolLog" EntitySet="CarpoolLogs" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="CarPoolToolModelStoreContainer" CdmEntityContainer="CarPoolToolEntities">
+          <EntitySetMapping Name="CarpoolLogs">
+            <EntityTypeMapping TypeName="CarPoolToolModel.CarpoolLog">
+              <MappingFragment StoreEntitySet="CarpoolLog">
+                <ScalarProperty Name="username" ColumnName="username" />
+                <ScalarProperty Name="data" ColumnName="data" />
+                <ScalarProperty Name="driver" ColumnName="driver" />
+                <ScalarProperty Name="passenger" ColumnName="passenger" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="CarPoolToolModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="username" ColumnName="username" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="admin" ColumnName="admin" />
+                <ScalarProperty Name="display_name" ColumnName="display_name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Totals">
+            <EntityTypeMapping TypeName="CarPoolToolModel.Total">
+              <MappingFragment StoreEntitySet="Totals">
+                <ScalarProperty Name="username" ColumnName="username" />
+                <ScalarProperty Name="passenger_total" ColumnName="passenger_total" />
+                <ScalarProperty Name="driver_total" ColumnName="driver_total" />
+                <ScalarProperty Name="carpool_total" ColumnName="carpool_total" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

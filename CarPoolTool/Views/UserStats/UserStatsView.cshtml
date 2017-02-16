@@ -1,0 +1,22 @@
+﻿@model IEnumerable<CarPoolTool.Models.UserTotal>
+
+@{
+    ViewBag.Title = "Statistiche";
+}
+
+<h2>Statistiche di partecipazione</h2>
+
+<table class="table">
+    <tr>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.ActionLink("Dettagli utente per " + item.User.display_name, "Details", item)
+        </td>
+    </tr>
+}
+
+</table>
