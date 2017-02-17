@@ -1,5 +1,5 @@
 ﻿@model CarPoolTool.Models.UserTotal
-
+@using CarPoolTool.Helpers
 
 <div class="ui card stat-card">
     <div class="content">
@@ -44,7 +44,7 @@
                 </div>
                 <div class="blue statistic">
                     <div class="value">
-                        <i class="road icon"></i> @Model.Total.passenger_total
+                        <i class="road icon"></i> @Model.Total.carpool_total
                     </div>
                     <div class="label">
                         viaggiato
@@ -52,10 +52,10 @@
                 </div>
                 <div class="red statistic">
                     <div class="value">
-                        <i class="line chart icon"></i> @(((float)Model.Total.driver_total / (float)Model.Total.carpool_total).ToString("N2"))
+                        <i class="line chart icon"></i> @MathHelper.ComputeDriveRunsRatio(Model.Total.driver_total.Value, Model.Total.carpool_total.Value).ToString("N2")
                     </div>
                     <div class="label">
-                        corse/guide
+                        guide/corse
                     </div>
                 </div>
             </div>

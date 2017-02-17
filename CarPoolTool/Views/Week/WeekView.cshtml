@@ -1,0 +1,24 @@
+﻿@using CarPoolTool.Models
+@model IEnumerable<DayLog>
+
+@{
+    ViewBag.Title = "Schedule";
+}
+
+<h2>Settimana del @Model.ElementAt(0).Date.ToShortDateString()</h2>
+
+@foreach (var day in Model)
+{
+    <div>
+        @day.Date.ToString("dddd")
+        <br/>
+
+        @foreach (var user in day.Userdata.Keys)
+        {
+            UserStatus userstatus = day.Userdata[user];
+            <div>
+                @(user.display_name): @userstatus.ToString()
+            </div>
+        }
+    </div>
+}
