@@ -1,0 +1,24 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+}
+
+<h2>Login</h2>
+
+@using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "ui form"}))
+{
+    <div class="field">
+        <label>Username</label>
+        @Html.TextBox("user")
+    </div>
+
+    <div class="field">
+        <label>Password</label>
+        @Html.Password("pass")
+    </div>
+
+    <button class="ui blue labeled icon button" type="submit">
+        <i class="icon sign in"></i>
+        Sign in
+    </button>
+}

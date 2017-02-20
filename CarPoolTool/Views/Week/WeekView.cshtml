@@ -5,20 +5,84 @@
     ViewBag.Title = "Schedule";
 }
 
-<h2>Settimana del @Model.ElementAt(0).Date.ToShortDateString()</h2>
+<h2>Settimana del @Model.ElementAt(0).Date.ToString("dd/MM")</h2>
 
-@foreach (var day in Model)
-{
-    <div>
-        @day.Date.ToString("dddd")
-        <br/>
-
-        @foreach (var user in day.Userdata.Keys)
+<div class="ui styled accordion">
+    @foreach (var day in Model)
+    {
+        if (!ViewData.ContainsKey("activeDay"))
         {
-            UserStatus userstatus = day.Userdata[user];
-            <div>
-                @(user.display_name): @userstatus.ToString()
-            </div>
+            ViewData["activeDay"] = DateTime.Today.DayOfWeek;
         }
-    </div>
+        string activeAttr = day.Date.DayOfWeek == (DayOfWeek)ViewData["activeDay"] ? "active" : "";
+        string driverStr = day.GetDriverStr();
+        string passengersStr = day.GetPassengersStr();
+        string absentStr = day.GetAbsentStr();
+        string missingStr = day.GetMissingStr();
+
+        <div class="@activeAttr title">
+            <i class="dropdown icon"></i>
+            @day.Date.ToString("dddd dd") 
+            <span style="float:right;">
+                <i class="teal car icon"></i>
+                @driverStr
+
+                <i class="blue road icon"></i>
+                @passengersStr
+            </span>
+        </div>
+
+        <div class="@activeAttr content">
+            <table class="ui unstackable definition table">
+                <tbody>
+                    <!-- Guidatore -->
+                    <tr>
+                        <td>
+                            <i class="teal car icon"></i>
+                        </td>
+                        <td>
+                            @driverStr
+                        </td>
+                    </tr>
+
+                    <!-- Passeggeri -->
+                    <tr>
+                        <td>
+                            <i class="blue road icon"></i>
+                        </td>
+                        <td>
+                            @passengersStr
+                        </td>
+                    </tr>
+
+                    <!-- Consiglio dei dieci assenti -->
+                    <tr>
+                        <td>
+                            <i class="red remove user icon"></i>
+                        </td>
+                        <td>
+                            @absentStr
+                        </td>
+                    </tr>
+
+                    <!-- dispersi -->
+                    <tr>
+                        <td>
+                            <i class="gray help circle icon"></i>
+                        </td>
+                        <td>
+                            @missingStr
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Scripts
+{
+    <script>
+        $('.ui.accordion').accordion();
+    </script>
 }
