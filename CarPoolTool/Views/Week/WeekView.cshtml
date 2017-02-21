@@ -9,8 +9,9 @@
 <h2>Settimana del @Model.ElementAt(0).Date.ToString("dd/MM")</h2>
 
 <div class="ui styled accordion">
-    @foreach (var day in Model)
+    @for (int i = 0; i < Model.Count(); i++)
     {
+        var day = Model.ElementAt(i);
         if (!ViewData.ContainsKey("activeDay"))
         {
             ViewData["activeDay"] = DateTime.Today.DayOfWeek;
@@ -20,6 +21,8 @@
         string passengersStr = day.GetPassengersStr();
         string absentStr = day.GetAbsentStr();
         string missingStr = day.GetMissingStr();
+
+        string idPopupDayEdit = "popupDayEdit" + i.ToString();
 
         <div class="@activeAttr title">
             <i class="dropdown icon"></i>
@@ -84,24 +87,60 @@
                 <div class="ui icon yellow message">
                     <i class="warning icon"></i>
                     <div class="content">
-                        <div class="header">
-                            Non sei segnato per questo giorno. Come ti gira?
-                        </div>
-                        <a class="width65 ui labeled teal icon button" style="margin-top:6px;">
-                            <i class="car icon"></i>
-                            Guido io!
-                        </a>
-                        <a class="width65 ui labeled blue icon button" style="margin-top:6px;">
-                            <i class="road icon"></i>
-                            Partecipo
-                        </a>
-                        <a class="width65 ui labeled red icon button" style="margin-top:6px;">
-                            <i class="remove user icon"></i>
-                            Solo/Ferie
-                        </a>
+                        Non sei segnato per questo giorno 
+                        <button class="ui labeled icon button" onclick="$('#@idPopupDayEdit').modal('show');">
+                            <i class="orange edit icon"></i>
+                            segnati ora
+                        </button>
                     </div>
                 </div>
             }
+        </div>
+
+        <!-- Modification Popup -->
+        <div class="ui modal" id="@idPopupDayEdit">
+            <div class="header">Ciao @user.display_name!</div>
+            <div class="content">
+                <p>
+                    <h3>
+                        Il tuo stato per il giorno @day.Date.ToString("dd/MM") è: 
+                        @switch (day.Userdata[user])
+                        {
+                            case UserStatus.Driver:
+                                <i class="ui teal car icon"></i><text>Guidatore</text>
+                                break;
+                            case UserStatus.Passenger:
+                                <i class="ui blue road icon"></i><text>Partecipi</text>
+                                break;
+                            case UserStatus.Absent:
+                                <i class="ui red remove user icon"></i><text>Assente / da solo</text>
+                                break;
+                            case UserStatus.MissingData:
+                                <i class="ui gray help circle icon"></i><text>Non sengato</text>
+                                break;
+                            default:
+                                break;
+                        }
+                    </h3>
+                </p>
+                <p>
+                    <h3>Vuoi apportare una modifica?</h3>
+                </p>
+            </div>
+            <div class="actions">
+                <a class="ui labeled teal icon button">
+                    <i class="car icon"></i>
+                    Guido io!
+                </a>
+                <a class="ui labeled blue icon button">
+                    <i class="road icon"></i>
+                    Partecipo
+                </a>
+                <a class="ui labeled red icon button">
+                    <i class="remove user icon"></i>
+                    Da solo / ferie
+                </a>
+            </div>
         </div>
     }
 </div>

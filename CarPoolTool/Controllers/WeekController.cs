@@ -14,6 +14,7 @@ namespace CarPoolTool.Controllers
         public ActionResult Index()
         {
             DateTime today = DateTime.Today;
+            DayOfWeek todaysDay = today.DayOfWeek;
             bool weekend = today.DayOfWeek == DayOfWeek.Saturday || today.DayOfWeek == DayOfWeek.Sunday;
 
             while(today.DayOfWeek != DayOfWeek.Monday)
@@ -21,11 +22,11 @@ namespace CarPoolTool.Controllers
                 today = weekend ? today.AddDays(1) : today.AddDays(-1);
             }
 
-            return RedirectToAction("Week", new { start = today.Date });
+            return RedirectToAction("Week", new { start = today.Date, activeDay = weekend ? DayOfWeek.Monday : todaysDay });
         }
 
 
-        public ActionResult Week(DateTime start, DateTime activeDay)
+        public ActionResult Week(DateTime start, DayOfWeek activeDay)
         {
             CarPoolToolEntities entities = new CarPoolToolEntities();
 
@@ -57,9 +58,11 @@ namespace CarPoolTool.Controllers
                 week[curDay].FillMissing(users);
             }
 
+            ViewBag.ActiveDay = activeDay;
             return View("WeekView", week.Values);
         }
 
+        /*
         public ActionResult Update(DateTime day, User user, UserStatus status)
         {
             day = day.Date;
@@ -106,5 +109,6 @@ namespace CarPoolTool.Controllers
             }
 
         }
+        */
     }
 }
