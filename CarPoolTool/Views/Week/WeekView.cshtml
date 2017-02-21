@@ -3,6 +3,7 @@
 
 @{
     ViewBag.Title = "Schedule";
+    User user = CarPoolTool.Models.User.GetByUsername(User.Identity.Name);
 }
 
 <h2>Settimana del @Model.ElementAt(0).Date.ToString("dd/MM")</h2>
@@ -76,6 +77,31 @@
                     </tr>
                 </tbody>
             </table>
+
+            <!-- Messaggio non segnato -->
+            @if(day.Userdata[user] == UserStatus.MissingData)
+            {
+                <div class="ui icon yellow message">
+                    <i class="warning icon"></i>
+                    <div class="content">
+                        <div class="header">
+                            Non sei segnato per questo giorno. Come ti gira?
+                        </div>
+                        <a class="width65 ui labeled teal icon button" style="margin-top:6px;">
+                            <i class="car icon"></i>
+                            Guido io!
+                        </a>
+                        <a class="width65 ui labeled blue icon button" style="margin-top:6px;">
+                            <i class="road icon"></i>
+                            Partecipo
+                        </a>
+                        <a class="width65 ui labeled red icon button" style="margin-top:6px;">
+                            <i class="remove user icon"></i>
+                            Solo/Ferie
+                        </a>
+                    </div>
+                </div>
+            }
         </div>
     }
 </div>

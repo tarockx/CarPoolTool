@@ -5,7 +5,7 @@
 
 <h2>Login</h2>
 
-@using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "ui form"}))
+@using (Html.BeginForm("Login", "Account", new { returnUrl = Request.QueryString["ReturnUrl"] }, FormMethod.Post, new { @class = "ui form"}))
 {
     <div class="field">
         <label>Username</label>
@@ -21,4 +21,19 @@
         <i class="icon sign in"></i>
         Sign in
     </button>
+}
+
+@if (TempData.ContainsKey("loginError"))
+{
+    <div class="ui icon red message">
+        <i class="warning icon"></i>
+        <div class="content">
+            <div class="header">
+                Errore di login
+            </div>
+            <p>
+                @TempData["loginError"].ToString()
+            </p>
+        </div>
+    </div>
 }

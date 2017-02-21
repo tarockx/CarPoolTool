@@ -22,5 +22,11 @@ namespace CarPoolTool.Models
         {
             return username.GetHashCode();
         }
+
+        public static User GetByUsername(string username)
+        {
+            CarPoolToolEntities entities = new CarPoolToolEntities();
+            return (from u in entities.Users where u.username.Equals(System.Web.HttpContext.Current.User.Identity.Name) select u).FirstOrDefault();
+        }
     }
 }

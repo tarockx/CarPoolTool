@@ -7,6 +7,7 @@ using System.Web.Mvc;
 
 namespace CarPoolTool.Controllers
 {
+    [Authorize]
     public class WeekController : Controller
     {
         // GET: Week
@@ -24,7 +25,7 @@ namespace CarPoolTool.Controllers
         }
 
 
-        public ActionResult Week(DateTime start)
+        public ActionResult Week(DateTime start, DateTime activeDay)
         {
             CarPoolToolEntities entities = new CarPoolToolEntities();
 
@@ -57,6 +58,53 @@ namespace CarPoolTool.Controllers
             }
 
             return View("WeekView", week.Values);
+        }
+
+        public ActionResult Update(DateTime day, User user, UserStatus status)
+        {
+            day = day.Date;
+            CarPoolToolEntities entities = new CarPoolToolEntities();
+
+            var log = (from l in entities.CarpoolLogs where l.data == day && l.username == user.username select l).FirstOrDefault();
+
+            //Remove entry
+            if(status == UserStatus.MissingData)
+            {
+                if(log != null)
+                {
+                    entities.CarpoolLogs.Remove(log);
+                    entities.SaveChanges();
+                    return RedirectToAction()
+                }
+            }
+
+            bool update = true;
+            if(log == null)
+            {
+                log = new CarpoolLog();
+                log.username = user.username;
+                log.data = day;
+                update = false;
+            }
+
+            switch (status)
+            {
+                case UserStatus.Driver:
+                    log.driver = 1;
+                    log.passenger = 0;
+                    break;
+                case UserStatus.Passenger:
+                    log.driver = 0;
+                    log.passenger = 1;
+                    break;
+                case UserStatus.Absent:
+                    log.driver = 0;
+                    log.passenger = 0;
+                    break;
+                default:
+                    break;
+            }
+
         }
     }
 }

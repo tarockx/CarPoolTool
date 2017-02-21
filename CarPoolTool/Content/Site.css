@@ -24,3 +24,8 @@ textarea {
 .stat-card{
     min-width: 315px;
 }
+
+.width65{
+    margin-top: 5px;
+    width: 150px;
+}

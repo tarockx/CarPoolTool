@@ -24,14 +24,15 @@ namespace CarPoolTool.Controllers
         }
 
         [HttpPost]
-        public ActionResult Login(string user, string pass, string ReturnUrl)
+        public ActionResult Login(string user, string pass, string returnUrl)
         {
             CarPoolToolEntities entities = new CarPoolToolEntities();
 
             var validUsers = from u in entities.Users where u.username.Equals(user) && u.password.Equals(pass) select u;
             if (validUsers == null || validUsers.Count() == 0)
             {
-
+                TempData["loginError"] = "Username sconosciuto o password non corretta.";
+                return View("LoginView");
             }
 
             User validUser = validUsers.ToList().First();
@@ -44,7 +45,6 @@ namespace CarPoolTool.Controllers
             var authenticationManager = ctx.Authentication;
             authenticationManager.SignIn(new Microsoft.Owin.Security.AuthenticationProperties() { IsPersistent = true }, id);
 
-            string returnUrl = ReturnUrl;
             if (returnUrl != null)
             {
                 return Redirect(returnUrl);
@@ -62,6 +62,18 @@ namespace CarPoolTool.Controllers
             authenticationManager.SignOut();
 
             return RedirectToAction("Index", "Home");
+        }
+
+        public static User GetCurrentUser()
+        {
+            if (System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+            {
+                return Models.User.GetByUsername(System.Web.HttpContext.Current.User.Identity.Name);
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
