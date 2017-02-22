@@ -3,7 +3,7 @@
 
 @{
     ViewBag.Title = "Schedule";
-    User user = CarPoolTool.Models.User.GetByUsername(User.Identity.Name);
+    User loggeduser = CarPoolTool.Models.User.GetByUsername(User.Identity.Name);
 }
 
 <h2>Settimana del @Model.ElementAt(0).Date.ToString("dd/MM")</h2>
@@ -24,7 +24,7 @@
 
         string idPopupDayEdit = "popupDayEdit" + i.ToString();
 
-        <div class="@activeAttr title">
+        <div class="@activeAttr title" data-day="@day.Date.DayOfWeek.ToString()">
             <i class="dropdown icon"></i>
             @day.Date.ToString("dddd dd") 
             <span style="float:right;">
@@ -82,14 +82,14 @@
             </table>
 
             <!-- Messaggio non segnato -->
-            @if(day.Userdata[user] == UserStatus.MissingData)
+            @if(day.Userdata[loggeduser] == UserStatus.MissingData)
             {
                 <div class="ui icon yellow message">
                     <i class="warning icon"></i>
-                    <div class="content">
-                        Non sei segnato per questo giorno 
-                        <button class="ui labeled icon button" onclick="$('#@idPopupDayEdit').modal('show');">
-                            <i class="orange edit icon"></i>
+                    <div>
+                        Non sei segnato per @day.Date.ToString("dddd")
+                        <button class="ui labeled brown icon button" onclick="$('#@idPopupDayEdit').modal('show');">
+                            <i class="edit icon"></i>
                             segnati ora
                         </button>
                     </div>
@@ -99,12 +99,12 @@
 
         <!-- Modification Popup -->
         <div class="ui modal" id="@idPopupDayEdit">
-            <div class="header">Ciao @user.display_name!</div>
+            <div class="header">Ciao @loggeduser.display_name!</div>
             <div class="content">
                 <p>
                     <h3>
                         Il tuo stato per il giorno @day.Date.ToString("dd/MM") è: 
-                        @switch (day.Userdata[user])
+                        @switch (day.Userdata[loggeduser])
                         {
                             case UserStatus.Driver:
                                 <i class="ui teal car icon"></i><text>Guidatore</text>
@@ -128,18 +128,24 @@
                 </p>
             </div>
             <div class="actions">
-                <a class="ui labeled teal icon button">
-                    <i class="car icon"></i>
-                    Guido io!
-                </a>
-                <a class="ui labeled blue icon button">
-                    <i class="road icon"></i>
-                    Partecipo
-                </a>
-                <a class="ui labeled red icon button">
-                    <i class="remove user icon"></i>
-                    Da solo / ferie
-                </a>
+                @using (Html.BeginForm("Update", "Week", new { day = day.Date, username = loggeduser.username}, FormMethod.Post))
+                {
+                    <button type="submit" class="width165 ui labeled teal icon button" name="status" value="Driver">
+                        <i class="car icon"></i>
+                        Guido io!
+                    </button>
+
+                    <button type="submit" class="width165 ui labeled blue icon button" name="status" value="Passenger">
+                        <i class="road icon"></i>
+                        Partecipo
+                    </button>
+
+                    <button type="submit"  class="width165 ui labeled red icon button" name="status" value="Absent">
+                        <i class="remove user icon"></i>
+                        Da solo / ferie
+                    </button>
+                }
+                
             </div>
         </div>
     }

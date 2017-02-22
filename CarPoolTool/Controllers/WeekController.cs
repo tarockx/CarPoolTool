@@ -62,13 +62,13 @@ namespace CarPoolTool.Controllers
             return View("WeekView", week.Values);
         }
 
-        /*
-        public ActionResult Update(DateTime day, User user, UserStatus status)
+        [HttpPost]
+        public ActionResult Update(DateTime day, string username, UserStatus status)
         {
             day = day.Date;
             CarPoolToolEntities entities = new CarPoolToolEntities();
 
-            var log = (from l in entities.CarpoolLogs where l.data == day && l.username == user.username select l).FirstOrDefault();
+            var log = (from l in entities.CarpoolLogs where l.data == day && l.username == username select l).FirstOrDefault();
 
             //Remove entry
             if(status == UserStatus.MissingData)
@@ -77,38 +77,41 @@ namespace CarPoolTool.Controllers
                 {
                     entities.CarpoolLogs.Remove(log);
                     entities.SaveChanges();
-                    return RedirectToAction()
                 }
             }
-
-            bool update = true;
-            if(log == null)
+            else
             {
-                log = new CarpoolLog();
-                log.username = user.username;
-                log.data = day;
-                update = false;
+                if(log == null)
+                {
+                    log = new CarpoolLog();
+                    log.username = username;
+                    log.data = day;
+                    entities.CarpoolLogs.Add(log);
+                }
+
+                switch (status)
+                {
+                    case UserStatus.Driver:
+                        log.driver = 1;
+                        log.passenger = 0;
+                        break;
+                    case UserStatus.Passenger:
+                        log.driver = 0;
+                        log.passenger = 1;
+                        break;
+                    case UserStatus.Absent:
+                        log.driver = 0;
+                        log.passenger = 0;
+                        break;
+                    default:
+                        break;
+                }
+
+                //Update o insert
+                entities.SaveChanges();
             }
 
-            switch (status)
-            {
-                case UserStatus.Driver:
-                    log.driver = 1;
-                    log.passenger = 0;
-                    break;
-                case UserStatus.Passenger:
-                    log.driver = 0;
-                    log.passenger = 1;
-                    break;
-                case UserStatus.Absent:
-                    log.driver = 0;
-                    log.passenger = 0;
-                    break;
-                default:
-                    break;
-            }
-
+            return Redirect(Request.UrlReferrer.ToString());
         }
-        */
     }
 }
