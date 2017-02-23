@@ -10,6 +10,18 @@ namespace CarPoolTool.Controllers
     [Authorize]
     public class WeekController : Controller
     {
+        private DateTime GetMonday(DateTime date)
+        {
+            bool weekend = date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
+
+            while (date.DayOfWeek != DayOfWeek.Monday)
+            {
+                date = weekend ? date.AddDays(1) : date.AddDays(-1);
+            }
+
+            return date.Date;
+        }
+
         // GET: Week
         public ActionResult Index()
         {
@@ -17,14 +29,21 @@ namespace CarPoolTool.Controllers
             DayOfWeek todaysDay = today.DayOfWeek;
             bool weekend = today.DayOfWeek == DayOfWeek.Saturday || today.DayOfWeek == DayOfWeek.Sunday;
 
-            while(today.DayOfWeek != DayOfWeek.Monday)
-            {
-                today = weekend ? today.AddDays(1) : today.AddDays(-1);
-            }
+            DateTime start = GetMonday(today);
 
             return RedirectToAction("Week", new { start = today.Date, activeDay = weekend ? DayOfWeek.Monday : todaysDay });
         }
 
+        [HttpPost]
+        public ActionResult Switch(string date)
+        {
+            DateTime start = DateTime.ParseExact(date, "yyyy-M-d", System.Globalization.CultureInfo.InvariantCulture).Date;
+            bool weekend = start.DayOfWeek == DayOfWeek.Saturday || start.DayOfWeek == DayOfWeek.Sunday;
+            DayOfWeek startDay = start.DayOfWeek;
+            start = GetMonday(start);
+
+            return RedirectToAction("Week", new { start = start, activeDay = weekend ? DayOfWeek.Monday : startDay });
+        }
 
         public ActionResult Week(DateTime start, DayOfWeek activeDay)
         {

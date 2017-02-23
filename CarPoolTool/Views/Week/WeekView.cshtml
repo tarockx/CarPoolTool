@@ -6,7 +6,20 @@
     User loggeduser = CarPoolTool.Models.User.GetByUsername(User.Identity.Name);
 }
 
-<h2>Settimana del @Model.ElementAt(0).Date.ToString("dd/MM")</h2>
+<div>
+    <a class="ui red icon button">
+        <i class="ui chevron left icon"></i>
+    </a>
+    <div class="ui calendar" id="dateSelector">
+        <div class="ui red labeled icon button">
+            <i class="ui calendar icon"></i>
+            Settimana del @Model.ElementAt(0).Date.ToString("dd/MM")
+        </div>
+    </div>
+    <a class="ui red icon button">
+        <i class="ui chevron right icon"></i>
+    </a>
+</div>
 
 <div class="ui styled accordion">
     @for (int i = 0; i < Model.Count(); i++)
@@ -155,5 +168,13 @@
 {
     <script>
         $('.ui.accordion').accordion();
+        $('#dateSelector').calendar({
+            onChange: function (date, text) {
+                console.log("Date selected: " + date);
+                $.post('@Url.Action("Switch")', { date : date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() });
+            },
+            type: 'date',
+            today: true
+        });
     </script>
 }

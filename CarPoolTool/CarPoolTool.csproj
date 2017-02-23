@@ -137,6 +137,8 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\calendar.css" />
+    <Content Include="Content\calendar.min.css" />
     <Content Include="Content\components\accordion.css" />
     <Content Include="Content\components\accordion.js" />
     <Content Include="Content\components\accordion.min.css" />
@@ -320,6 +322,8 @@
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\calendar.js" />
+    <Content Include="Scripts\calendar.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
