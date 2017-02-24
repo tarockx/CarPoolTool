@@ -34,19 +34,29 @@ namespace CarPoolTool.Controllers
             return RedirectToAction("Week", new { start = today.Date, activeDay = weekend ? DayOfWeek.Monday : todaysDay });
         }
 
+        public ActionResult Week(DateTime date)
+        {
+            bool weekend = date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
+            DayOfWeek startDay = date.DayOfWeek;
+            date = GetMonday(date);
+
+            return RedirectToAction("Week", new { start = date, activeDay = weekend ? DayOfWeek.Monday : startDay });
+        }
+
         [HttpPost]
         public ActionResult Switch(string date)
         {
             DateTime start = DateTime.ParseExact(date, "yyyy-M-d", System.Globalization.CultureInfo.InvariantCulture).Date;
-            bool weekend = start.DayOfWeek == DayOfWeek.Saturday || start.DayOfWeek == DayOfWeek.Sunday;
-            DayOfWeek startDay = start.DayOfWeek;
-            start = GetMonday(start);
-
-            return RedirectToAction("Week", new { start = start, activeDay = weekend ? DayOfWeek.Monday : startDay });
+            return Week(start);
         }
 
         public ActionResult Week(DateTime start, DayOfWeek activeDay)
         {
+            if(start.DayOfWeek != DayOfWeek.Monday)
+            {
+                return Week(start);
+            }
+
             CarPoolToolEntities entities = new CarPoolToolEntities();
 
             DateTime end = start.AddDays(5);

@@ -6,175 +6,189 @@
     User loggeduser = CarPoolTool.Models.User.GetByUsername(User.Identity.Name);
 }
 
-<div>
-    <a class="ui red icon button">
-        <i class="ui chevron left icon"></i>
-    </a>
-    <div class="ui calendar" id="dateSelector">
-        <div class="ui red labeled icon button">
-            <i class="ui calendar icon"></i>
-            Settimana del @Model.ElementAt(0).Date.ToString("dd/MM")
+    <div class="ui grid">
+        <div class="three wide column">
+            <a class="ui red icon fluid button">
+                <i class="ui chevron left icon"></i>
+            </a>
+        </div>
+
+        <div class="ten wide column">
+            <div class="ui calendar" id="dateSelector">
+                <div class="ui red labeled icon fluid button">
+                    <i class="ui calendar icon"></i>
+                    Settimana del @Model.ElementAt(0).Date.ToString("dd/MM")
+                </div>
+            </div>
+        </div>
+
+        <div class="three wide column">
+            <a class="ui red icon fluid button">
+                <i class="ui chevron right icon"></i>
+            </a>
+        </div>
+
+        <div class="ui sixteen wide column">
+            <div class="ui styled accordion">
+                @for (int i = 0; i < Model.Count(); i++)
+            {
+                var day = Model.ElementAt(i);
+                if (!ViewData.ContainsKey("activeDay"))
+                {
+                    ViewData["activeDay"] = DateTime.Today.DayOfWeek;
+                }
+                string activeAttr = day.Date.DayOfWeek == (DayOfWeek)ViewData["activeDay"] ? "active" : "";
+                string driverStr = day.GetDriverStr();
+                string passengersStr = day.GetPassengersStr();
+                string absentStr = day.GetAbsentStr();
+                string missingStr = day.GetMissingStr();
+
+                string idPopupDayEdit = "popupDayEdit" + i.ToString();
+
+                    <div class="@activeAttr title" data-day="@day.Date.DayOfWeek.ToString()">
+                        <i class="dropdown icon"></i>
+                        @day.Date.ToString("dddd dd")
+                        <span style="float:right;">
+                            <i class="teal car icon"></i>
+                            @driverStr
+
+                            <i class="blue road icon"></i>
+                            @passengersStr
+                        </span>
+                    </div>
+
+                    <div class="@activeAttr content">
+                        <table class="ui unstackable definition table">
+                            <tbody>
+                                <!-- Guidatore -->
+                                <tr>
+                                    <td>
+                                        <i class="teal car icon"></i>
+                                    </td>
+                                    <td>
+                                        @driverStr
+                                    </td>
+                                </tr>
+
+                                <!-- Passeggeri -->
+                                <tr>
+                                    <td>
+                                        <i class="blue road icon"></i>
+                                    </td>
+                                    <td>
+                                        @passengersStr
+                                    </td>
+                                </tr>
+
+                                <!-- Consiglio dei dieci assenti -->
+                                <tr>
+                                    <td>
+                                        <i class="red remove user icon"></i>
+                                    </td>
+                                    <td>
+                                        @absentStr
+                                    </td>
+                                </tr>
+
+                                <!-- dispersi -->
+                                <tr>
+                                    <td>
+                                        <i class="gray help circle icon"></i>
+                                    </td>
+                                    <td>
+                                        @missingStr
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Messaggio non segnato -->
+                        @if (day.Userdata[loggeduser] == UserStatus.MissingData)
+                        {
+                            <div class="ui icon yellow message">
+                                <i class="warning icon"></i>
+                                <div>
+                                    Non sei segnato per @day.Date.ToString("dddd")
+                                    <button class="ui labeled brown icon button" onclick="$('#@idPopupDayEdit').modal('show');">
+                                        <i class="edit icon"></i>
+                                        segnati ora
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                <!-- Modification Popup -->
+                    <div class="ui modal" id="@idPopupDayEdit">
+                        <div class="header">Ciao @loggeduser.display_name!</div>
+                        <div class="content">
+                            <p>
+                                <h3>
+                                    Il tuo stato per il giorno @day.Date.ToString("dd/MM") è:
+                                    @switch (day.Userdata[loggeduser])
+                                    {
+                                        case UserStatus.Driver:
+                                            <i class="ui teal car icon"></i><text>Guidatore</text>
+                                            break;
+                                        case UserStatus.Passenger:
+                                            <i class="ui blue road icon"></i><text>Partecipi</text>
+                                            break;
+                                        case UserStatus.Absent:
+                                            <i class="ui red remove user icon"></i><text>Assente / da solo</text>
+                                            break;
+                                        case UserStatus.MissingData:
+                                            <i class="ui gray help circle icon"></i><text>Non sengato</text>
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                </h3>
+                            </p>
+                            <p>
+                                <h3>Vuoi apportare una modifica?</h3>
+                            </p>
+                        </div>
+                        <div class="actions">
+                            @using (Html.BeginForm("Update", "Week", new { day = day.Date, username = loggeduser.username }, FormMethod.Post))
+                            {
+                                <button type="submit" class="width165 ui labeled teal icon button" name="status" value="Driver">
+                                    <i class="car icon"></i>
+                                    Guido io!
+                                </button>
+
+                                <button type="submit" class="width165 ui labeled blue icon button" name="status" value="Passenger">
+                                    <i class="road icon"></i>
+                                    Partecipo
+                                </button>
+
+                                <button type="submit" class="width165 ui labeled red icon button" name="status" value="Absent">
+                                    <i class="remove user icon"></i>
+                                    Da solo / ferie
+                                </button>
+                            }
+
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
     </div>
-    <a class="ui red icon button">
-        <i class="ui chevron right icon"></i>
-    </a>
-</div>
 
-<div class="ui styled accordion">
-    @for (int i = 0; i < Model.Count(); i++)
-    {
-        var day = Model.ElementAt(i);
-        if (!ViewData.ContainsKey("activeDay"))
-        {
-            ViewData["activeDay"] = DateTime.Today.DayOfWeek;
-        }
-        string activeAttr = day.Date.DayOfWeek == (DayOfWeek)ViewData["activeDay"] ? "active" : "";
-        string driverStr = day.GetDriverStr();
-        string passengersStr = day.GetPassengersStr();
-        string absentStr = day.GetAbsentStr();
-        string missingStr = day.GetMissingStr();
 
-        string idPopupDayEdit = "popupDayEdit" + i.ToString();
 
-        <div class="@activeAttr title" data-day="@day.Date.DayOfWeek.ToString()">
-            <i class="dropdown icon"></i>
-            @day.Date.ToString("dddd dd") 
-            <span style="float:right;">
-                <i class="teal car icon"></i>
-                @driverStr
 
-                <i class="blue road icon"></i>
-                @passengersStr
-            </span>
-        </div>
-
-        <div class="@activeAttr content">
-            <table class="ui unstackable definition table">
-                <tbody>
-                    <!-- Guidatore -->
-                    <tr>
-                        <td>
-                            <i class="teal car icon"></i>
-                        </td>
-                        <td>
-                            @driverStr
-                        </td>
-                    </tr>
-
-                    <!-- Passeggeri -->
-                    <tr>
-                        <td>
-                            <i class="blue road icon"></i>
-                        </td>
-                        <td>
-                            @passengersStr
-                        </td>
-                    </tr>
-
-                    <!-- Consiglio dei dieci assenti -->
-                    <tr>
-                        <td>
-                            <i class="red remove user icon"></i>
-                        </td>
-                        <td>
-                            @absentStr
-                        </td>
-                    </tr>
-
-                    <!-- dispersi -->
-                    <tr>
-                        <td>
-                            <i class="gray help circle icon"></i>
-                        </td>
-                        <td>
-                            @missingStr
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <!-- Messaggio non segnato -->
-            @if(day.Userdata[loggeduser] == UserStatus.MissingData)
-            {
-                <div class="ui icon yellow message">
-                    <i class="warning icon"></i>
-                    <div>
-                        Non sei segnato per @day.Date.ToString("dddd")
-                        <button class="ui labeled brown icon button" onclick="$('#@idPopupDayEdit').modal('show');">
-                            <i class="edit icon"></i>
-                            segnati ora
-                        </button>
-                    </div>
-                </div>
-            }
-        </div>
-
-        <!-- Modification Popup -->
-        <div class="ui modal" id="@idPopupDayEdit">
-            <div class="header">Ciao @loggeduser.display_name!</div>
-            <div class="content">
-                <p>
-                    <h3>
-                        Il tuo stato per il giorno @day.Date.ToString("dd/MM") è: 
-                        @switch (day.Userdata[loggeduser])
-                        {
-                            case UserStatus.Driver:
-                                <i class="ui teal car icon"></i><text>Guidatore</text>
-                                break;
-                            case UserStatus.Passenger:
-                                <i class="ui blue road icon"></i><text>Partecipi</text>
-                                break;
-                            case UserStatus.Absent:
-                                <i class="ui red remove user icon"></i><text>Assente / da solo</text>
-                                break;
-                            case UserStatus.MissingData:
-                                <i class="ui gray help circle icon"></i><text>Non sengato</text>
-                                break;
-                            default:
-                                break;
-                        }
-                    </h3>
-                </p>
-                <p>
-                    <h3>Vuoi apportare una modifica?</h3>
-                </p>
-            </div>
-            <div class="actions">
-                @using (Html.BeginForm("Update", "Week", new { day = day.Date, username = loggeduser.username}, FormMethod.Post))
-                {
-                    <button type="submit" class="width165 ui labeled teal icon button" name="status" value="Driver">
-                        <i class="car icon"></i>
-                        Guido io!
-                    </button>
-
-                    <button type="submit" class="width165 ui labeled blue icon button" name="status" value="Passenger">
-                        <i class="road icon"></i>
-                        Partecipo
-                    </button>
-
-                    <button type="submit"  class="width165 ui labeled red icon button" name="status" value="Absent">
-                        <i class="remove user icon"></i>
-                        Da solo / ferie
-                    </button>
-                }
-                
-            </div>
-        </div>
-    }
-</div>
-
-@section Scripts
+    @section Scripts
 {
-    <script>
-        $('.ui.accordion').accordion();
-        $('#dateSelector').calendar({
-            onChange: function (date, text) {
-                console.log("Date selected: " + date);
-                $.post('@Url.Action("Switch")', { date : date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() });
-            },
-            type: 'date',
-            today: true
-        });
-    </script>
-}
+        <script>
+            $('.ui.accordion').accordion();
+            $('#dateSelector').calendar({
+                onChange: function (date, text) {
+                    console.log("Date selected: " + date);
+                    window.location = @Url.Action("Switch", new { date = ""}) + "?date=" + date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
+                    //$.post('@Url.Action("Switch")', { date: date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() });
+                },
+                type: 'date',
+                today: true
+            });
+        </script>
+    }
