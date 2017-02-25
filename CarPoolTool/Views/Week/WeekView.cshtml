@@ -177,18 +177,17 @@
 
 
 
-    @section Scripts
+@section Scripts
 {
-        <script>
-            $('.ui.accordion').accordion();
-            $('#dateSelector').calendar({
-                onChange: function (date, text) {
-                    window.location = "@Url.Action("Switch")" + "?date=" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-                    //$.post('@Url.Action("Switch")', { date: date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() });
-                },
-                type: 'date',
-                today: true,
-                firstDayOfWeek: 1
-            });
-        </script>
-    }
+    <script>
+        $('.ui.accordion').accordion();
+        $('#dateSelector').calendar({
+            onChange: function (date, text) {
+                window.location = "@Url.Action("Switch")" + "?date=" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+            },
+            type: 'date',
+            today: true,
+            firstDayOfWeek: 1
+        });
+    </script>
+}
