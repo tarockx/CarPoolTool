@@ -1,0 +1,20 @@
+﻿@using CarPoolTool.Models;
+@{ 
+    ActiveSection section = ViewBag.Section;
+}
+
+
+<div id="footer" class="ui inverted three item menu">
+    <a class="item @(section == ActiveSection.Week ? "active red" : "")" href="@Url.Action("Index","Week")">
+        <i class="calendar icon"></i>
+        Calendar
+    </a>
+    <a class="item @(section == ActiveSection.Stats ? "active red" : "")" href="@Url.Action("Index", "UserStats")">
+        <i class="line chart icon"></i>
+        Statistics
+    </a>
+    <a class="item @(section == ActiveSection.Account ? "active red" : "")" href="@Url.Action("Index", "Account")">
+        <i class="user icon"></i>
+        User
+    </a>
+</div>

@@ -6,31 +6,31 @@
     User loggeduser = CarPoolTool.Models.User.GetByUsername(User.Identity.Name);
 }
 
-    <div class="ui grid">
-        <div class="three wide column">
-            <a class="ui red icon fluid button">
-                <i class="ui chevron left icon"></i>
-            </a>
-        </div>
+<div class="ui grid">
+    <div class="three wide column">
+        <a class="ui red icon fluid button" href="@Url.Action("Week", new { start = Model.ElementAt(0).Date.AddDays(-7), skipAheadIfWeekend = false })">
+            <i class="ui chevron left icon"></i>
+        </a>
+    </div>
 
-        <div class="ten wide column">
-            <div class="ui calendar" id="dateSelector">
-                <div class="ui red labeled icon fluid button">
-                    <i class="ui calendar icon"></i>
-                    Settimana del @Model.ElementAt(0).Date.ToString("dd/MM")
-                </div>
+    <div class="ten wide column" style="padding-left:0;padding-right:0;">
+        <div class="ui calendar" id="dateSelector">
+            <div class="ui red labeled icon fluid button">
+                <i class="ui calendar icon"></i>
+                Settimana del @Model.ElementAt(0).Date.ToString("dd/MM")
             </div>
         </div>
+    </div>
 
-        <div class="three wide column">
-            <a class="ui red icon fluid button">
-                <i class="ui chevron right icon"></i>
-            </a>
-        </div>
+    <div class="three wide column">
+        <a class="ui red icon fluid button" href="@Url.Action("Week", new { start = Model.ElementAt(0).Date.AddDays(7), skipAheadIfWeekend = false })">
+            <i class="ui chevron right icon"></i>
+        </a>
+    </div>
 
-        <div class="ui sixteen wide column">
-            <div class="ui styled accordion">
-                @for (int i = 0; i < Model.Count(); i++)
+    <div class="ui sixteen wide column">
+        <div class="ui styled fluid accordion">
+            @for (int i = 0; i < Model.Count(); i++)
             {
                 var day = Model.ElementAt(i);
                 if (!ViewData.ContainsKey("activeDay"))
@@ -183,12 +183,12 @@
             $('.ui.accordion').accordion();
             $('#dateSelector').calendar({
                 onChange: function (date, text) {
-                    console.log("Date selected: " + date);
-                    window.location = @Url.Action("Switch", new { date = ""}) + "?date=" + date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
+                    window.location = "@Url.Action("Switch")" + "?date=" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
                     //$.post('@Url.Action("Switch")', { date: date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() });
                 },
                 type: 'date',
-                today: true
+                today: true,
+                firstDayOfWeek: 1
             });
         </script>
     }

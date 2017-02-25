@@ -1,32 +1,37 @@
 ﻿<!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CarPoolTool - @ViewBag.Title</title>
-    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
-    <link href="~/Content/semantic.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/Content/calendar.min.css" rel="stylesheet" type="text/css" />
-    <script src="~/Scripts/modernizr-2.6.2.js"></script>
-</head>
-<body>
-    <div class="ui segment">
-        <div class="ui fixed inverted red menu navbar grid">
-            <div class="ui centered row">
-                <div class="ui middle aligned column">
-                    <h2 class="ui inverted header">CarPoolTool v1 - @ViewBag.Title</h2>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CarPoolTool - @ViewBag.Title</title>
+        <link href="~/Content/semantic.min.css" rel="stylesheet" type="text/css" />
+        <link href="~/Content/calendar.min.css" rel="stylesheet" type="text/css" />
+        <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+        <script src="~/Scripts/modernizr-2.6.2.js"></script>
+    </head>
+    <body>
+        <!-- Header -->
+        <div class="ui segment">
+            <div class="ui fixed inverted red menu navbar grid">
+                <div class="ui centered row">
+                    <div class="ui middle aligned column">
+                        <h2 class="ui inverted header">CarPoolTool v1 - @ViewBag.Title</h2>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="ui segment">
-        @RenderBody()
-    </div>
+        <!-- Main content -->
+        <div class="ui basic segment">
+            @RenderBody()
+        </div>
 
-    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
-    <script src="~/Scripts/semantic.min.js"></script>
-    <script src="~/Scripts/calendar.min.js"></script>
-    @RenderSection("scripts", required: false)
-</body>
+        <!-- Footer -->
+        @Html.Partial("SectionsView")
+
+        <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+        <script src="~/Scripts/semantic.min.js"></script>
+        <script src="~/Scripts/calendar.min.js"></script>
+        @RenderSection("scripts", required: false)
+    </body>
 </html>

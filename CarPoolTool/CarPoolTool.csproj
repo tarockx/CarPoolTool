@@ -353,6 +353,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\MathHelper.cs" />
+    <Compile Include="Models\ActiveSection.cs" />
     <Compile Include="Models\CarpoolLog.cs">
       <DependentUpon>CarPoolToolModel.tt</DependentUpon>
     </Compile>
@@ -401,6 +402,7 @@
     <Content Include="Views\UserStats\UserStatsDetailView.cshtml" />
     <Content Include="Views\Week\WeekView.cshtml" />
     <Content Include="Views\Account\LoginView.cshtml" />
+    <Content Include="Views\Shared\SectionsView.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

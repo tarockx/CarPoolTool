@@ -13,6 +13,7 @@ namespace CarPoolTool.Controllers
         // GET: UserStats
         public ActionResult Index()
         {
+            ViewBag.Section = ActiveSection.Stats;
             CarPoolToolEntities entities = new CarPoolToolEntities();
 
             var usertotals = from a in entities.Users

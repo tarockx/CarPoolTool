@@ -10,13 +10,13 @@ namespace CarPoolTool.Controllers
     [Authorize]
     public class WeekController : Controller
     {
-        private DateTime GetMonday(DateTime date)
+        private DateTime GetMonday(DateTime date, bool skipAheadIfWeekend)
         {
             bool weekend = date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
 
             while (date.DayOfWeek != DayOfWeek.Monday)
             {
-                date = weekend ? date.AddDays(1) : date.AddDays(-1);
+                date = weekend && skipAheadIfWeekend ? date.AddDays(1) : date.AddDays(-1);
             }
 
             return date.Date;
@@ -25,36 +25,32 @@ namespace CarPoolTool.Controllers
         // GET: Week
         public ActionResult Index()
         {
+            ViewBag.Section = ActiveSection.Week;
             DateTime today = DateTime.Today;
-            DayOfWeek todaysDay = today.DayOfWeek;
-            bool weekend = today.DayOfWeek == DayOfWeek.Saturday || today.DayOfWeek == DayOfWeek.Sunday;
-
-            DateTime start = GetMonday(today);
-
-            return RedirectToAction("Week", new { start = today.Date, activeDay = weekend ? DayOfWeek.Monday : todaysDay });
+            return Week(today, true);
         }
 
-        public ActionResult Week(DateTime date)
-        {
-            bool weekend = date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
-            DayOfWeek startDay = date.DayOfWeek;
-            date = GetMonday(date);
-
-            return RedirectToAction("Week", new { start = date, activeDay = weekend ? DayOfWeek.Monday : startDay });
-        }
-
-        [HttpPost]
         public ActionResult Switch(string date)
         {
+            ViewBag.Section = ActiveSection.Week;
             DateTime start = DateTime.ParseExact(date, "yyyy-M-d", System.Globalization.CultureInfo.InvariantCulture).Date;
-            return Week(start);
+            return Week(start, false);
         }
 
-        public ActionResult Week(DateTime start, DayOfWeek activeDay)
+
+        public ActionResult Week(DateTime start, bool skipAheadIfWeekend)
         {
+            ViewBag.Section = ActiveSection.Week;
+
+            DayOfWeek activeDay = start.DayOfWeek;
+            bool weekend = activeDay == DayOfWeek.Saturday || activeDay == DayOfWeek.Sunday;
             if(start.DayOfWeek != DayOfWeek.Monday)
             {
-                return Week(start);
+                start = GetMonday(start, skipAheadIfWeekend);
+            }
+            if (weekend)
+            {
+                activeDay = skipAheadIfWeekend ? DayOfWeek.Monday : DayOfWeek.Friday;
             }
 
             CarPoolToolEntities entities = new CarPoolToolEntities();
@@ -90,6 +86,7 @@ namespace CarPoolTool.Controllers
             ViewBag.ActiveDay = activeDay;
             return View("WeekView", week.Values);
         }
+
 
         [HttpPost]
         public ActionResult Update(DateTime day, string username, UserStatus status)

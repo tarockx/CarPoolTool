@@ -15,6 +15,7 @@ namespace CarPoolTool.Controllers
         [HttpGet]
         public ActionResult Login()
         {
+            ViewBag.Section = ActiveSection.Account;
             if (User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Logout");
@@ -57,6 +58,7 @@ namespace CarPoolTool.Controllers
 
         public ActionResult Logout()
         {
+            ViewBag.Section = ActiveSection.Account;
             var ctx = Request.GetOwinContext();
             var authenticationManager = ctx.Authentication;
             authenticationManager.SignOut();
