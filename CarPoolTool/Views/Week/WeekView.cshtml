@@ -124,47 +124,57 @@
                     </div>
 
                 <!-- Modification Popup -->
-                    <div class="ui modal" id="@idPopupDayEdit">
-                        <div class="header">Ciao @loggeduser.display_name!</div>
-                        <div class="content">
-                            <p>
-                                <h3>
-                                    Il tuo stato per il giorno @day.Date.ToString("dd/MM") è:
-                                    @Html.Partial("UserStatusView", day.Userdata[loggeduser])
-                                </h3>
-                            </p>
-                            <p>
-                                <h3>Vuoi apportare una modifica?</h3>
-                            </p>
-                        </div>
-                        <div class="actions">
-                            @using (Html.BeginForm("Update", "Week", new { day = day.Date, username = loggeduser.username }, FormMethod.Post))
-                            {
-                                <button type="submit" class="width165 ui labeled teal icon button" name="status" value="Driver">
-                                    <i class="car icon"></i>
-                                    Guido io!
-                                </button>
-
-                                <button type="submit" class="width165 ui labeled blue icon button" name="status" value="Passenger">
-                                    <i class="road icon"></i>
-                                    Partecipo
-                                </button>
-
-                                <button type="submit" class="width165 ui labeled red icon button" name="status" value="Absent">
-                                    <i class="remove user icon"></i>
-                                    Da solo / ferie
-                                </button>
-                            }
-
-                        </div>
+                <div class="ui modal" id="@idPopupDayEdit">
+                    <div class="header">Ciao @loggeduser.display_name!</div>
+                    <div class="content">
+                        <p>
+                            <h3>
+                                Il tuo stato per il giorno @day.Date.ToString("dd/MM") è:
+                                @Html.Partial("UserStatusView", day.Userdata[loggeduser])
+                            </h3>
+                        </p>
+                        <p>
+                            <h3>Vuoi apportare una modifica?</h3>
+                        </p>
                     </div>
-                }
-            </div>
+                    <div class="actions">
+                        @using (Html.BeginForm("Update", "Week", new { day = day.Date, username = loggeduser.username }, FormMethod.Post))
+                        {
+                            <button type="submit" class="width165 ui labeled teal icon button" name="status" value="Driver">
+                                <i class="car icon"></i>
+                                Guido io!
+                            </button>
+
+                            <button type="submit" class="width165 ui labeled blue icon button" name="status" value="Passenger">
+                                <i class="road icon"></i>
+                                Partecipo
+                            </button>
+
+                            <button type="submit" class="width165 ui labeled red icon button" name="status" value="Absent">
+                                <i class="remove user icon"></i>
+                                Da solo / ferie
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
         </div>
     </div>
+</div>
 
+<!-- Week mass edit -->
+<div class="ui modal">
+    <div class="header">
+        Modifica massiva settimana
+    </div>
 
+    <div class="content">
+        @using (Html.BeginForm())
+        {
 
+        }
+    </div>
+</div>
 
 @section Scripts
 {
