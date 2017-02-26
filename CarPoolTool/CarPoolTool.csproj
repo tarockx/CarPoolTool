@@ -318,6 +318,7 @@
     <Content Include="Content\themes\material\assets\fonts\icons.ttf" />
     <Content Include="Content\themes\material\assets\fonts\icons.woff" />
     <None Include="Properties\PublishProfiles\carpooltool - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\carpooltool - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\carpooltool - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -399,10 +400,12 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\UserStats\UserStatsView.cshtml" />
-    <Content Include="Views\UserStats\UserStatsDetailView.cshtml" />
+    <Content Include="Views\Shared\UserStatsDetailView.cshtml" />
     <Content Include="Views\Week\WeekView.cshtml" />
     <Content Include="Views\Account\LoginView.cshtml" />
     <Content Include="Views\Shared\SectionsView.cshtml" />
+    <Content Include="Views\Week\UserStatusView.cshtml" />
+    <Content Include="Views\Account\UserView.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -48,3 +48,7 @@ textarea {
 .no-right-padding{
     padding-right:0px;
 }
+
+.hand-cursor{
+    cursor:pointer;
+}

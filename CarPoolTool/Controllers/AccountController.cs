@@ -11,6 +11,20 @@ namespace CarPoolTool.Controllers
 {
     public class AccountController : Controller
     {
+        public ActionResult Index()
+        {
+            ViewBag.Section = ActiveSection.Account;
+
+            if (User.Identity.IsAuthenticated)
+            {
+                return View("UserView", UserTotal.Get(GetCurrentUser()));
+            }
+            else
+            {
+                return View("LoginView");
+            }
+        }
+
         // GET: Account
         [HttpGet]
         public ActionResult Login()
@@ -52,7 +66,7 @@ namespace CarPoolTool.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index");
             }
         }
 
@@ -63,7 +77,7 @@ namespace CarPoolTool.Controllers
             var authenticationManager = ctx.Authentication;
             authenticationManager.SignOut();
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index");
         }
 
         public static User GetCurrentUser()

@@ -105,14 +105,19 @@
                         <!-- Messaggio non segnato -->
                         @if (day.Userdata[loggeduser] == UserStatus.MissingData)
                         {
-                            <div class="ui icon yellow message">
+                            <div class="ui icon yellow message hand-cursor" onclick="$('#@idPopupDayEdit').modal('show');">
                                 <i class="warning icon"></i>
                                 <div>
-                                    Non sei segnato per @day.Date.ToString("dddd")
-                                    <button class="ui labeled brown icon button" onclick="$('#@idPopupDayEdit').modal('show');">
-                                        <i class="edit icon"></i>
-                                        segnati ora
-                                    </button>
+                                    Non sei segnato per @day.Date.ToString("dddd"). Tocca per segnarti ora!
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="ui icon green message hand-cursor" onclick="$('#@idPopupDayEdit').modal('show');">
+                                <i class="info circle icon"></i>
+                                <div>
+                                    Sei segnato come <b>@Html.Partial("UserStatusView", day.Userdata[loggeduser])</b>. Tocca per modificare.
                                 </div>
                             </div>
                         }
@@ -125,23 +130,7 @@
                             <p>
                                 <h3>
                                     Il tuo stato per il giorno @day.Date.ToString("dd/MM") è:
-                                    @switch (day.Userdata[loggeduser])
-                                    {
-                                        case UserStatus.Driver:
-                                            <i class="ui teal car icon"></i><text>Guidatore</text>
-                                            break;
-                                        case UserStatus.Passenger:
-                                            <i class="ui blue road icon"></i><text>Partecipi</text>
-                                            break;
-                                        case UserStatus.Absent:
-                                            <i class="ui red remove user icon"></i><text>Assente / da solo</text>
-                                            break;
-                                        case UserStatus.MissingData:
-                                            <i class="ui gray help circle icon"></i><text>Non sengato</text>
-                                            break;
-                                        default:
-                                            break;
-                                    }
+                                    @Html.Partial("UserStatusView", day.Userdata[loggeduser])
                                 </h3>
                             </p>
                             <p>

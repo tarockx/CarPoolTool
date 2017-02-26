@@ -1,0 +1,20 @@
+﻿@using CarPoolTool.Models;
+@model CarPoolTool.Models.UserStatus
+
+@switch (Model)
+{
+    case UserStatus.Driver:
+        <i class="ui teal large car icon"></i><text>Guidatore</text>
+        break;
+    case UserStatus.Passenger:
+        <i class="ui blue large road icon"></i><text>Passeggero</text>
+        break;
+    case UserStatus.Absent:
+        <i class="ui red large remove user icon"></i><text>Assente / da solo</text>
+        break;
+    case UserStatus.MissingData:
+        <i class="ui gray large help circle icon"></i><text>Non sengato</text>
+        break;
+    default:
+        break;
+}

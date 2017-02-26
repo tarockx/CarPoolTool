@@ -1,0 +1,16 @@
+﻿@using CarPoolTool.Models;
+@model CarPoolTool.Models.UserTotal
+
+@{
+    ViewBag.Title = "User";
+}
+
+<h2>Benvenuto! Le tue statistiche:</h2>
+
+@Html.Partial("UserStatsDetailView", Model)
+
+<h2>Non sei tu?</h2>
+<a class="ui red labeled icon button" href="@Url.Action("Logout", "Account")">
+    <i class="ui sign out icon"></i>
+    Disconnettiti
+</a>
