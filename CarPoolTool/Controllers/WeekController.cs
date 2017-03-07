@@ -22,6 +22,42 @@ namespace CarPoolTool.Controllers
             return date.Date;
         }
 
+        private IEnumerable<DayLog> GetWeek(DateTime start)
+        {
+            CarPoolToolEntities entities = new CarPoolToolEntities();
+
+            DateTime end = start.AddDays(5);
+
+            var log = from a in entities.CarpoolLogs
+                      where a.data >= start && a.data < end
+                      orderby a.data
+                      select a;
+
+            Dictionary<DateTime, DayLog> week = new Dictionary<DateTime, DayLog>();
+            foreach (var item in log.ToList())
+            {
+                if (!week.ContainsKey(item.data.Date))
+                {
+                    week[item.data.Date] = new DayLog(item.data.Date);
+                }
+                week[item.data.Date].InsertLog(item);
+            }
+
+            //Fill missing users and/or days
+            var users = entities.Users;
+            for (int i = 0; i < 5; i++)
+            {
+                DateTime curDay = start.AddDays(i);
+                if (!week.ContainsKey(curDay))
+                {
+                    week[curDay] = new DayLog(curDay);
+                }
+                week[curDay].FillMissing(users);
+            }
+
+            return week.Values.OrderBy(x => x.Date);
+        }
+
         // GET: Week
         public ActionResult Index()
         {
@@ -53,38 +89,10 @@ namespace CarPoolTool.Controllers
                 activeDay = skipAheadIfWeekend ? DayOfWeek.Monday : DayOfWeek.Friday;
             }
 
-            CarPoolToolEntities entities = new CarPoolToolEntities();
-
-            DateTime end = start.AddDays(5);
-
-            var log = from a in entities.CarpoolLogs
-                      where a.data >= start && a.data < end
-                      orderby a.data
-                      select a;
-
-            Dictionary<DateTime, DayLog> week = new Dictionary<DateTime, DayLog>();
-            foreach (var item in log.ToList())
-            {
-                if (!week.ContainsKey(item.data.Date))
-                {
-                    week[item.data.Date] = new DayLog(item.data.Date);
-                }
-                week[item.data.Date].InsertLog(item);
-            }
-
-            //Fill missing users and/or days
-            var users = entities.Users;
-            for(int i = 0; i < 5; i++)
-            {
-                DateTime curDay = start.AddDays(i);
-                if (!week.ContainsKey(curDay)){
-                    week[curDay] = new DayLog(curDay);
-                }
-                week[curDay].FillMissing(users);
-            }
+            var week = GetWeek(start);
 
             ViewBag.ActiveDay = activeDay;
-            return View("WeekView", week.Values);
+            return View("WeekView", week);
         }
 
 
@@ -138,6 +146,24 @@ namespace CarPoolTool.Controllers
             }
 
             return Redirect(Request.UrlReferrer.ToString());
+        }
+
+        [HttpGet]
+        public ActionResult WeekEdit(DateTime start)
+        {
+            ViewBag.Section = ActiveSection.Week;
+
+            var week = GetWeek(start);
+
+            return View("WeekEditView", week);
+        }
+
+        [HttpPost]
+        public ActionResult WeekEdit(DateTime day, Dictionary<DayOfWeek, DayLog> weekdata)
+        {
+            ViewBag.Section = ActiveSection.Week;
+
+            return RedirectToAction("Week", new { start = day, skipAheadIfWeekend = false });
         }
     }
 }

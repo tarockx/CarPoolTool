@@ -406,6 +406,7 @@
     <Content Include="Views\Shared\SectionsView.cshtml" />
     <Content Include="Views\Week\UserStatusView.cshtml" />
     <Content Include="Views\Account\UserView.cshtml" />
+    <Content Include="Views\Week\WeekEditView.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

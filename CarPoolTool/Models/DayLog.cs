@@ -9,6 +9,31 @@ namespace CarPoolTool.Models
     {
         public DateTime Date { get; set; }
         public Dictionary<User, UserStatus> Userdata { get; set; } = new Dictionary<User, UserStatus>();
+        public string[] Passengers {
+            get
+            {
+                return (from u in Userdata where u.Value == UserStatus.Passenger select u.Key.username).ToArray();
+            }
+            set
+            {
+                foreach(string user in value)
+                {
+                    Userdata[User.GetByUsername(user)] = UserStatus.Passenger;
+                }
+            }
+        }
+
+        public string Driver
+        {
+            get
+            {
+                return (from u in Userdata where u.Value == UserStatus.Driver select u.Key.username).FirstOrDefault();
+            }
+            set
+            {
+                Userdata[User.GetByUsername(value)] = UserStatus.Driver;
+            }
+        }
 
         public DayLog() { }
         public DayLog(DateTime date)

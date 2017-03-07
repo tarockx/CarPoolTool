@@ -26,7 +26,13 @@ namespace CarPoolTool.Models
         public static User GetByUsername(string username)
         {
             CarPoolToolEntities entities = new CarPoolToolEntities();
-            return (from u in entities.Users where u.username.Equals(System.Web.HttpContext.Current.User.Identity.Name) select u).FirstOrDefault();
+            return (from u in entities.Users where u.username.Equals(username) select u).FirstOrDefault();
+        }
+
+        public static List<User> GetAll()
+        {
+            CarPoolToolEntities entities = new CarPoolToolEntities();
+            return entities.Users.ToList();
         }
     }
 }
