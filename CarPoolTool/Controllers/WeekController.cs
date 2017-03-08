@@ -52,7 +52,7 @@ namespace CarPoolTool.Controllers
                 {
                     week[curDay] = new DayLog(curDay);
                 }
-                week[curDay].FillMissing(users);
+                week[curDay].FillMissingUsers(users, UserStatus.MissingData);
             }
 
             return week.Values.OrderBy(x => x.Date);

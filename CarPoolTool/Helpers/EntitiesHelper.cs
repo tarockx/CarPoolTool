@@ -8,20 +8,29 @@ namespace CarPoolTool.Helpers
 {
     public class EntitiesHelper
     {
-        public static void PersistDayLog(DayLog daylog)
+        public static void PersistDayLog(DayLog daylog, UserStatus? fillStatus)
         {
-
+            CarPoolToolEntities entities = new CarPoolToolEntities();
+            PersistDayLog(daylog, entities, fillStatus, true);
         }
 
-        public static void PersistDayLog(DayLog daylog, CarPoolToolEntities entities)
+        public static void PersistDayLog(DayLog daylog, CarPoolToolEntities entities, UserStatus? fillStatus, bool persistChanges)
         {
             DateTime day = daylog.Date.Date;
-            CarPoolToolEntities entities = new CarPoolToolEntities();
+            
             var users = entities.Users;
-            daylog.FillMissing(users);
+            if (fillStatus.HasValue)
+            {
+                daylog.FillMissingUsers(users, fillStatus.Value);
+            }
 
             foreach (var user in users)
             {
+                if (!daylog.Userdata.ContainsKey(user))
+                {
+                    continue;
+                }
+
                 var log = (from l in entities.CarpoolLogs where l.data == day && l.User == user select l).FirstOrDefault();
                 UserStatus status = daylog.Userdata[user];
 
@@ -63,8 +72,12 @@ namespace CarPoolTool.Helpers
 
                 }
             }
+
             //Update o insert
-            entities.SaveChanges();
+            if (persistChanges)
+            {
+                entities.SaveChanges();
+            }
 
         }
     }
