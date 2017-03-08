@@ -16,9 +16,12 @@ namespace CarPoolTool.Models
             }
             set
             {
-                foreach(string user in value)
+                if(value != null)
                 {
-                    Userdata[User.GetByUsername(user)] = UserStatus.Passenger;
+                    foreach(string user in value)
+                    {
+                        Userdata[User.GetByUsername(user)] = UserStatus.Passenger;
+                    }
                 }
             }
         }
@@ -31,7 +34,10 @@ namespace CarPoolTool.Models
             }
             set
             {
-                Userdata[User.GetByUsername(value)] = UserStatus.Driver;
+                if(value != null)
+                {
+                    Userdata[User.GetByUsername(value)] = UserStatus.Driver;
+                }
             }
         }
 

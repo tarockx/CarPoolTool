@@ -28,7 +28,7 @@
                                 <i class="teal car icon"></i>
                             </td>
                             <td style="padding:2px;">
-                                <select name="weekdata[@i].Value.Driver" class="ui fluid dropdown">
+                                <select name="weekdata[@i].Value.Driver" data-index="@i" class="ui fluid dropdown driver-select">
                                     <option value="">Non selezionato</option>
                                     @foreach (User user in users)
                                     {
@@ -44,6 +44,7 @@
                                 <i class="blue road icon"></i>
                             </td>
                             <td style="padding:2px;">
+                                @*
                                 <div class="ui fluid multiple search selection dropdown">
                                     <input name="weekdata[@i].Value.Passengers" type="hidden">
                                     <i class="dropdown icon"></i>
@@ -55,15 +56,18 @@
                                         }
                                     </div>
                                 </div>
+                                *@
 
-                                @*
-                                <select name="weekdata[@i].Value.Passengers" multiple class="ui fluid dropdown">
+                                <select name="weekdata[@i].Value.Passengers" data-index="@i" multiple class="ui fluid dropdown passengers-select">
                                     @foreach (User user in users)
                                     {
-                                        <option value="@user.username" @(day.Userdata[user].Equals(UserStatus.Passenger) ? "selected=\"selected\"" : "")>@user.display_name</option>
+                                        <option value="@user.username"
+                                                @(day.Userdata[user].Equals(UserStatus.Passenger) ? "selected=\"selected\"" : "")
+                                                @(day.Userdata[user].Equals(UserStatus.Driver) ? "disabled" : "")>
+                                            @user.display_name
+                                        </option>
                                     }
                                 </select>
-                                *@
                             </td>
                         </tr>
                     </tbody>
@@ -78,10 +82,14 @@
 @section Scripts
 {
     <script>
-        $('.ui.dropdown').dropdown({
+        $('.driver-select').dropdown({
             onChange: function (value, text, $selectedItem) {
-                console.log($selectedItem);
+                $selectedItem.closest('tbody').find('.passengers-select').dropdown('remove selected', value);
+                $selectedItem.closest('tbody').find('.passengers-select div.menu div.item').removeClass('disabled');
+                $selectedItem.closest('tbody').find('.passengers-select div.menu div.item[data-value="' + value + '"]').addClass('disabled');
             }
         });
+
+        $('.passengers-select').dropdown();
     </script>
 }
