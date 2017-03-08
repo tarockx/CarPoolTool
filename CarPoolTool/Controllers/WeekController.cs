@@ -153,6 +153,11 @@ namespace CarPoolTool.Controllers
         {
             ViewBag.Section = ActiveSection.Week;
 
+            if (start.DayOfWeek != DayOfWeek.Monday)
+            {
+                start = GetMonday(start, false);
+            }
+
             var week = GetWeek(start);
 
             return View("WeekEditView", week);

@@ -9,7 +9,7 @@
 
 <div class="ui grid">
     <div class="sixteen wide column">
-        @using (Html.BeginForm("WeekEdit", "Week", new { day = Model.ElementAt(0).Date }, FormMethod.Post))
+        @using (Html.BeginForm("WeekEdit", "Week", new { day = Model.ElementAt(0).Date }, FormMethod.Post, new { @id = "weekForm" }))
         {
             for (int i = 0; i < Model.Count(); i++)
             {
@@ -44,25 +44,11 @@
                                 <i class="blue road icon"></i>
                             </td>
                             <td style="padding:2px;">
-                                @*
-                                <div class="ui fluid multiple search selection dropdown">
-                                    <input name="weekdata[@i].Value.Passengers" type="hidden">
-                                    <i class="dropdown icon"></i>
-                                    <div class="default text">Nessuna selezione</div>
-                                    <div class="menu">
-                                        @foreach (User user in users)
-                                        {
-                                            <div class="item" @(day.Userdata[user].Equals(UserStatus.Passenger) ? "selected=\"selected\"" : "") data-value="@user.username">@user.display_name</div>
-                                        }
-                                    </div>
-                                </div>
-                                *@
-
                                 <select name="weekdata[@i].Value.Passengers" data-index="@i" multiple class="ui fluid dropdown passengers-select">
                                     @foreach (User user in users)
                                     {
                                         <option value="@user.username"
-                                                @(day.Userdata[user].Equals(UserStatus.Passenger) ? "selected=\"selected\"" : "")
+                                                @(day.Userdata[user].Equals(UserStatus.Passenger) || day.Userdata[user].Equals(UserStatus.MissingData) ? "selected=\"selected\"" : "")
                                                 @(day.Userdata[user].Equals(UserStatus.Driver) ? "disabled" : "")>
                                             @user.display_name
                                         </option>
@@ -73,10 +59,21 @@
                     </tbody>
                 </table>
             }
-
-            <button type="submit" class="ui red button">Submit</button>
         }
     </div>
+    <div class="eight wide column">
+        <button type="submit" form="weekForm" class="ui labeled icon green fluid button">
+            <i class="save icon"></i>
+            Salva
+        </button>
+    </div>
+    <div class="eight wide column">
+        <a class="ui labeled icon red fluid button" href="@Url.Action("Week",new { start = Model.ElementAt(0).Date.Date, skipAheadIfWeekend = false })">
+            <i class="cancel icon"></i>
+            Annulla modifiche
+        </a>
+    </div>
+        
 </div>
 
 @section Scripts
