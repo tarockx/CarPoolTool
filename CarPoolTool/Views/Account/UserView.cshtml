@@ -2,10 +2,10 @@
 @model CarPoolTool.Models.UserTotal
 
 @{
-    ViewBag.Title = "User";
+    ViewBag.Title = "Pannello utente";
 }
 
-<h2>Benvenuto! Le tue statistiche:</h2>
+<h3>Benvenuto @Model.User.display_name! <br /> Le tue statistiche:</h3>
 
 @Html.Partial("UserStatsDetailView", Model)
 

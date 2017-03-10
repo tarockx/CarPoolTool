@@ -12,7 +12,7 @@ namespace CarPoolTool.Controllers
         // GET: Home
         public ActionResult Index()
         {
-            return RedirectToAction("Index", "UserStats");
+            return RedirectToAction("Index", "Week");
         }
     }
 }

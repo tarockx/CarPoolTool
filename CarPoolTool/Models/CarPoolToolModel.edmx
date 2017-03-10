@@ -4,7 +4,17 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="CarPoolToolModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="CarPoolToolModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Alert">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="username" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="data" Type="date" Nullable="false" />
+          <Property Name="message" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="severity" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
         <EntityType Name="CarpoolLog">
           <Key>
             <PropertyRef Name="username" />
@@ -35,6 +45,18 @@ warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary ke
           <Property Name="driver_total" Type="int" />
           <Property Name="carpool_total" Type="int" />
         </EntityType>
+        <Association Name="FK_Alert_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Alert" Type="Self.Alert" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="username" />
+            </Principal>
+            <Dependent Role="Alert">
+              <PropertyRef Name="username" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_CarpoolLog_User">
           <End Role="User" Type="Self.User" Multiplicity="1" />
           <End Role="CarpoolLog" Type="Self.CarpoolLog" Multiplicity="*" />
@@ -48,6 +70,7 @@ warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary ke
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="CarPoolToolModelStoreContainer">
+          <EntitySet Name="Alert" EntityType="Self.Alert" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CarpoolLog" EntityType="Self.CarpoolLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Totals" EntityType="Self.Totals" store:Type="Views" store:Schema="dbo">
@@ -58,13 +81,16 @@ warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary ke
     [Totals].[carpool_total] AS [carpool_total]
     FROM [dbo].[Totals] AS [Totals]</DefiningQuery>
           </EntitySet>
+          <AssociationSet Name="FK_Alert_User" Association="Self.FK_Alert_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Alert" EntitySet="Alert" />
+          </AssociationSet>
           <AssociationSet Name="FK_CarpoolLog_User" Association="Self.FK_CarpoolLog_User">
             <End Role="User" EntitySet="User" />
             <End Role="CarpoolLog" EntitySet="CarpoolLog" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="CarPoolToolModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -88,6 +114,7 @@ warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary ke
           <Property Name="admin" Type="Int16" Nullable="false" />
           <Property Name="display_name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="CarpoolLogs" Relationship="Self.FK_CarpoolLog_User" FromRole="User" ToRole="CarpoolLog" />
+          <NavigationProperty Name="Alerts" Relationship="CarPoolToolModel.FK_Alert_User" FromRole="User" ToRole="Alert" />
         </EntityType>
         <EntityType Name="Total">
           <Key>
@@ -118,7 +145,35 @@ warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary ke
             <End Role="User" EntitySet="Users" />
             <End Role="CarpoolLog" EntitySet="CarpoolLogs" />
           </AssociationSet>
+          <EntitySet Name="Alerts" EntityType="CarPoolToolModel.Alert" />
+          <AssociationSet Name="FK_Alert_User" Association="CarPoolToolModel.FK_Alert_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Alert" EntitySet="Alerts" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Alert">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="username" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="data" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="message" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="severity" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="User" Relationship="CarPoolToolModel.FK_Alert_User" FromRole="Alert" ToRole="User" />
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <Association Name="FK_Alert_User">
+          <End Type="CarPoolToolModel.User" Role="User" Multiplicity="1" />
+          <End Type="CarPoolToolModel.Alert" Role="Alert" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="username" />
+            </Principal>
+            <Dependent Role="Alert">
+              <PropertyRef Name="username" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -152,6 +207,17 @@ warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary ke
                 <ScalarProperty Name="passenger_total" ColumnName="passenger_total" />
                 <ScalarProperty Name="driver_total" ColumnName="driver_total" />
                 <ScalarProperty Name="carpool_total" ColumnName="carpool_total" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Alerts">
+            <EntityTypeMapping TypeName="CarPoolToolModel.Alert">
+              <MappingFragment StoreEntitySet="Alert">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="severity" ColumnName="severity" />
+                <ScalarProperty Name="message" ColumnName="message" />
+                <ScalarProperty Name="data" ColumnName="data" />
+                <ScalarProperty Name="username" ColumnName="username" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

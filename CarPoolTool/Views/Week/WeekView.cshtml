@@ -1,21 +1,22 @@
 ﻿@using CarPoolTool.Models
+@using System.Globalization
 @model IEnumerable<DayLog>
 
 @{
-    ViewBag.Title = "Schedule";
+    ViewBag.Title = "Calendario";
     User loggeduser = CarPoolTool.Models.User.GetByUsername(User.Identity.Name);
 }
 
 <div class="ui grid">
     <div class="three wide column">
-        <a class="ui red icon fluid button" href="@Url.Action("Week", new { start = Model.ElementAt(0).Date.AddDays(-7), skipAheadIfWeekend = false })">
+        <a class="ui icon fluid button" href="@Url.Action("Week", new { start = Model.ElementAt(0).Date.AddDays(-7), skipAheadIfWeekend = false })">
             <i class="ui chevron left icon"></i>
         </a>
     </div>
 
     <div class="ten wide column" style="padding-left:0;padding-right:0;">
         <div class="ui calendar" id="dateSelector">
-            <div class="ui red labeled icon fluid button">
+            <div class="ui labeled icon fluid button">
                 <i class="ui calendar icon"></i>
                 Settimana del @Model.ElementAt(0).Date.ToString("dd/MM")
             </div>
@@ -23,16 +24,36 @@
     </div>
 
     <div class="three wide column">
-        <a class="ui red icon fluid button" href="@Url.Action("Week", new { start = Model.ElementAt(0).Date.AddDays(7), skipAheadIfWeekend = false })">
+        <a class="ui icon fluid button" href="@Url.Action("Week", new { start = Model.ElementAt(0).Date.AddDays(7), skipAheadIfWeekend = false })">
             <i class="ui chevron right icon"></i>
         </a>
     </div>
 
-    <div class="ui sixteen wide column">
-        <a class="ui yellow labeled icon fluid button" href="@Url.Action("WeekEdit", new { start = Model.ElementAt(0).Date })">
+    <div class="ui eight wide column" style="padding-top:0px; padding-bottom:0px;">
+        <a class="ui labeled icon fluid button" href="@Url.Action("WeekEdit", new { start = Model.ElementAt(0).Date })">
             <i class="ui edit icon"></i>
-            Edit massivo settimana
+            Edit massivo
         </a>
+    </div>
+    <div class="ui eight wide column" style="padding-top:0px; padding-bottom:0px;">
+        <a class="ui labeled icon fluid button" onclick="$('#popupReset').modal('show');">
+            <i class="ui trash icon"></i>
+            Resetta settimana
+        </a>
+
+        <div class="ui modal" id="popupReset">
+            <div class="ui header">
+                Reset settimana
+            </div>
+            <div class="ui content">
+                <p>La settimana corrente verrà resettata, tutti gli utenti per questa settimana verranno impostati come "Non Segnato"</p>
+                <p>Sei sicuro?</p>
+            </div>
+            <div class="ui actions">
+                <a class="ui green approve button" href="@Url.Action("WeekReset", new { start = Model.ElementAt(0).Date })">Si, resetta</a>
+                <button class="ui red cancel button">No, annulla</button>
+            </div>
+        </div>
     </div>
 
     <div class="ui sixteen wide column">
@@ -54,13 +75,19 @@
 
                     <div class="@activeAttr title" data-day="@day.Date.DayOfWeek.ToString()">
                         <i class="dropdown icon"></i>
-                        @day.Date.ToString("dddd dd")
+                        @CultureInfo.CurrentCulture.TextInfo.ToTitleCase(day.Date.ToString("dddd dd"))
+
                         <span style="float:right;">
+                            @if(day.Alerts != null && day.Alerts.Count() > 0)
+                            {
+                                <i class="red warning sign icon"></i>
+                            }
+
                             <i class="teal car icon"></i>
                             @driverStr
 
                             <i class="blue road icon"></i>
-                            @passengersStr
+                            @day.GetByStatus(UserStatus.Passenger).Count.ToString()
                         </span>
                     </div>
 
@@ -109,6 +136,52 @@
                             </tbody>
                         </table>
 
+                        @if (day.Alerts != null && day.Alerts.Count() > 0)
+                        {
+                            foreach (Alert alert in day.Alerts)
+                            {
+                                <div class="ui icon blue message">
+                                    <i class="warning icon"></i>
+                                    <div style="width:100%;">
+                                        <i class="ui user icon"></i><strong>@alert.User.display_name</strong>:
+                                        @alert.message
+                                    </div>
+                                    <div>
+                                        <a class="ui red icon button" href="@Url.Action("DeleteAlert", new { start = day.Date, alertId = alert.id })">
+                                            <i class="trash icon"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        <div style="overflow:hidden;">
+                            <button class="ui labeled right floated icon button" onclick="$('#@("popupAddAlert" + i.ToString())').modal('show');">
+                                <i class="ui plus icon"></i>
+                                Aggiungi avviso
+                            </button>
+
+                            <div class="ui modal" id="@("popupAddAlert" + i.ToString())">
+                                <div class="ui header">
+                                    Nuovo avviso per @day.Date.ToString("dddd dd")
+                                </div>
+                                <div class="ui content">
+                                    <p>Stai inserendo un nuovo avviso. Inserisci il testo:</p>
+                                    @using (Html.BeginForm("InsertAlert", "Week", new { start = day.Date}, FormMethod.Post, new { id = "alertForm" + i.ToString(), @class = "ui form" }))
+                                    {
+                                        <input type="hidden" name="alert.username" value="@loggeduser.username"/>
+                                        <input type="hidden" name="alert.data" value="@day.Date.Date" />
+                                        <input type="hidden" name="alert.severity" value="warning" />
+                                        <textarea name="alert.message" placeholder="Inserisci un messaggio..."></textarea>
+                                    }
+                                </div>
+                                <div class="ui actions">
+                                    <button type="submit" form="@("alertForm" + i.ToString())" class="ui green button">Inserisci</button>
+                                    <button class="ui red cancel button">Annulla</button>
+                                </div>
+                            </div>
+                        </div>
+
+
                         <!-- Messaggio non segnato -->
                         @if (day.Userdata[loggeduser] == UserStatus.MissingData)
                         {
@@ -147,17 +220,35 @@
                     <div class="actions">
                         @using (Html.BeginForm("Update", "Week", new { day = day.Date, username = loggeduser.username }, FormMethod.Post))
                         {
-                            <button type="submit" class="width165 ui labeled teal icon button" name="status" value="Driver">
-                                <i class="car icon"></i>
-                                Guido io!
-                            </button>
+                            var driver = day.GetByStatus(UserStatus.Driver).FirstOrDefault();
+                            if (driver == null)
+                            {
+                                <button type="submit" class="width165 ui labeled teal icon button" style="margin-bottom: 5px;" name="status" value="Driver">
+                                    <i class="car icon"></i>
+                                    Guido io!
+                                </button>
+                            }
+                            else
+                            {
+                                <div class="ui buttons">
+                                    <input type="hidden" name="status" value="Driver"/>
+                                    <button type="submit" class="width165 ui labeled teal icon button" style="margin-bottom: 5px;" name="formerDriverStatus" value="Passenger">
+                                        <i class="car icon"></i>
+                                        Guido io! (@driver.display_name passeggero)
+                                    </button>
+                                    <button type="submit" class="width165 ui labeled teal icon button" style="margin-bottom: 5px;" name="formerDriverStatus" value="Absent">
+                                        <i class="car icon"></i>
+                                        Guido io! (@driver.display_name assente / da solo)
+                                    </button>
+                                </div>
+                            }
 
-                            <button type="submit" class="width165 ui labeled blue icon button" name="status" value="Passenger">
+                            <button type="submit" class="width165 ui labeled blue icon button" style="margin-bottom: 5px;" name="status" value="Passenger">
                                 <i class="road icon"></i>
-                                Partecipo
+                                Passeggero
                             </button>
 
-                            <button type="submit" class="width165 ui labeled red icon button" name="status" value="Absent">
+                            <button type="submit" class="width165 ui labeled red icon button" style="margin-bottom: 5px;" name="status" value="Absent">
                                 <i class="remove user icon"></i>
                                 Da solo / ferie
                             </button>

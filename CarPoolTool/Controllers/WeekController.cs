@@ -1,4 +1,5 @@
-﻿using CarPoolTool.Models;
+﻿using CarPoolTool.Helpers;
+using CarPoolTool.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +56,16 @@ namespace CarPoolTool.Controllers
                 week[curDay].FillMissingUsers(users, UserStatus.MissingData);
             }
 
+
+            //Load alerts
+            foreach (var daylog in week.Values)
+            {
+                var alerts = from a in entities.Alerts
+                             where a.data == daylog.Date
+                             select a;
+                daylog.Alerts = alerts.ToList();
+            }
+
             return week.Values.OrderBy(x => x.Date);
         }
 
@@ -97,10 +108,24 @@ namespace CarPoolTool.Controllers
 
 
         [HttpPost]
-        public ActionResult Update(DateTime day, string username, UserStatus status)
+        public ActionResult Update(DateTime day, string username, UserStatus status, UserStatus? formerDriverStatus)
         {
             day = day.Date;
             CarPoolToolEntities entities = new CarPoolToolEntities();
+
+            var driver = (from l in entities.CarpoolLogs where l.data == day && l.driver == 1 select l).FirstOrDefault();
+            if(driver != null)
+            {
+                if (formerDriverStatus.HasValue && formerDriverStatus != UserStatus.Driver)
+                {
+                    driver.driver = 0;
+                    driver.passenger = formerDriverStatus == UserStatus.Absent ? (short)0 : (short)1;
+                }
+                else
+                {
+                    entities.CarpoolLogs.Remove(driver);
+                }
+            }
 
             var log = (from l in entities.CarpoolLogs where l.data == day && l.username == username select l).FirstOrDefault();
 
@@ -110,7 +135,6 @@ namespace CarPoolTool.Controllers
                 if(log != null)
                 {
                     entities.CarpoolLogs.Remove(log);
-                    entities.SaveChanges();
                 }
             }
             else
@@ -141,11 +165,38 @@ namespace CarPoolTool.Controllers
                         break;
                 }
 
-                //Update o insert
+            }
+
+            //Update o insert
+            entities.SaveChanges();
+
+            return Redirect(Request.UrlReferrer.ToString());
+        }
+
+
+        [HttpGet]
+        public ActionResult WeekReset(DateTime start)
+        {
+            ViewBag.Section = ActiveSection.Week;
+
+            if (start.DayOfWeek != DayOfWeek.Monday)
+            {
+                start = GetMonday(start, false);
+            }
+            DateTime end = start.AddDays(5);
+
+            CarPoolToolEntities entities = new CarPoolToolEntities();
+
+            var log = from a in entities.CarpoolLogs
+                      where a.data >= start && a.data < end
+                      select a;
+            if(log != null)
+            {
+                entities.CarpoolLogs.RemoveRange(log);
                 entities.SaveChanges();
             }
 
-            return Redirect(Request.UrlReferrer.ToString());
+            return RedirectToAction("Week", new { start = start, skipAheadIfWeekend = false });
         }
 
         [HttpGet]
@@ -168,7 +219,53 @@ namespace CarPoolTool.Controllers
         {
             ViewBag.Section = ActiveSection.Week;
 
+            CarPoolToolEntities entities = new CarPoolToolEntities();
+
+            foreach (var daylog in weekdata.Values)
+            {
+                EntitiesHelper.PersistDayLog(daylog, entities, UserStatus.Absent, false);
+            }
+
+            entities.SaveChanges();
+
             return RedirectToAction("Week", new { start = day, skipAheadIfWeekend = false });
+        }
+
+        [HttpPost]
+        public ActionResult InsertAlert(Alert alert, DateTime start)
+        {
+            ViewBag.Section = ActiveSection.Week;
+
+                CarPoolToolEntities entities = new CarPoolToolEntities();
+                if (alert != null && alert.isValid())
+                {
+                    entities.Alerts.Add(alert);
+                    entities.SaveChanges();
+                }
+            return RedirectToAction("Week", new { start = start, skipAheadIfWeekend = false });
+        }
+
+        [HttpGet]
+        public ActionResult DeleteAlert(DateTime start, int alertId)
+        {
+            ViewBag.Section = ActiveSection.Week;
+
+            if (start.DayOfWeek != DayOfWeek.Monday)
+            {
+                start = GetMonday(start, false);
+            }
+
+            if(alertId > 0)
+            {
+                CarPoolToolEntities entities = new CarPoolToolEntities();
+                var alert = (from a in entities.Alerts where a.id == alertId select a).FirstOrDefault();
+                if(alert != null) {
+                    entities.Alerts.Remove(alert);
+                    entities.SaveChanges();
+                }
+            }
+
+            return RedirectToAction("Week", new { start = start, skipAheadIfWeekend = false });
         }
     }
 }

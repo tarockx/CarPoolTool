@@ -31,7 +31,7 @@ namespace CarPoolTool.Helpers
                     continue;
                 }
 
-                var log = (from l in entities.CarpoolLogs where l.data == day && l.User == user select l).FirstOrDefault();
+                var log = (from l in entities.CarpoolLogs where l.data == day && l.username == user.username select l).FirstOrDefault();
                 UserStatus status = daylog.Userdata[user];
 
                 //Remove entry

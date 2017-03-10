@@ -6,6 +6,7 @@
     List<User> users = CarPoolTool.Models.User.GetAll();
 }
 
+<br/>
 
 <div class="ui grid">
     <div class="sixteen wide column">
@@ -62,7 +63,7 @@
         }
     </div>
     <div class="eight wide column">
-        <button type="submit" form="weekForm" class="ui labeled icon green fluid button">
+        <button class="ui labeled icon green fluid button" onclick="$(this).addClass('loading disabled'); $('#weekForm').submit();">
             <i class="save icon"></i>
             Salva
         </button>
@@ -80,13 +81,28 @@
 {
     <script>
         $('.driver-select').dropdown({
-            onChange: function (value, text, $selectedItem) {
-                $selectedItem.closest('tbody').find('.passengers-select').dropdown('remove selected', value);
-                $selectedItem.closest('tbody').find('.passengers-select div.menu div.item').removeClass('disabled');
-                $selectedItem.closest('tbody').find('.passengers-select div.menu div.item[data-value="' + value + '"]').addClass('disabled');
+            onChange: function (value, text, $selectedItem) {                
+                //if (value) {
+                //    $('.driver-select').find('.dropdown.icon').removeClass('dropdown').addClass('delete').on('click', function () {
+                //        $('.driver-select').dropdown('clear');
+                //        $(this).removeClass('delete').addClass('dropdown');
+                //    });
+                //}
+                if ($selectedItem) {
+                    $selectedItem.closest('tbody').find('.passengers-select').dropdown('remove selected', value);
+                    $selectedItem.closest('tbody').find('.passengers-select div.menu div.item').removeClass('disabled');
+                    $selectedItem.closest('tbody').find('.passengers-select div.menu div.item[data-value="' + value + '"]').addClass('disabled');
+                }
             }
         });
 
         $('.passengers-select').dropdown();
+
+        //if ($('.driver-select').dropdown('get value')) {
+        //    $('.driver-select').find('.dropdown.icon').removeClass('dropdown').addClass('delete').on('click', function () {
+        //        $('.driver-select').dropdown('clear');
+        //        $(this).removeClass('delete').addClass('dropdown');
+        //    });
+        //}
     </script>
 }

@@ -28,5 +28,6 @@ namespace CarPoolTool.Models
         public virtual DbSet<CarpoolLog> CarpoolLogs { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Total> Totals { get; set; }
+        public virtual DbSet<Alert> Alerts { get; set; }
     }
 }

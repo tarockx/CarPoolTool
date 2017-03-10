@@ -9,6 +9,8 @@ namespace CarPoolTool.Models
     {
         public DateTime Date { get; set; }
         public Dictionary<User, UserStatus> Userdata { get; set; } = new Dictionary<User, UserStatus>();
+
+        public IEnumerable<Alert> Alerts { get; set; }
         public string[] Passengers {
             get
             {

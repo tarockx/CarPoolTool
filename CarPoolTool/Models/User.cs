@@ -18,6 +18,7 @@ namespace CarPoolTool.Models
         public User()
         {
             this.CarpoolLogs = new HashSet<CarpoolLog>();
+            this.Alerts = new HashSet<Alert>();
         }
     
         public string username { get; set; }
@@ -27,5 +28,7 @@ namespace CarPoolTool.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CarpoolLog> CarpoolLogs { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Alert> Alerts { get; set; }
     }
 }

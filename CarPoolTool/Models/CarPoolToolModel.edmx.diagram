@@ -9,6 +9,8 @@
         <EntityTypeShape EntityType="CarPoolToolModel.User" Width="1.5" PointX="0.75" PointY="0.875" IsExpanded="true" />
         <EntityTypeShape EntityType="CarPoolToolModel.Total" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
         <AssociationConnector Association="CarPoolToolModel.FK_CarpoolLog_User" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="CarPoolToolModel.Alert" Width="1.5" PointX="5.625" PointY="4" />
+        <AssociationConnector Association="CarPoolToolModel.FK_Alert_User" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
