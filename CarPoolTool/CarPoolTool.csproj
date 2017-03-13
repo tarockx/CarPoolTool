@@ -350,7 +350,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\UserStatsController.cs" />
+    <Compile Include="Controllers\StatisticsController.cs" />
     <Compile Include="Controllers\WeekController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -406,8 +406,8 @@
     <Content Include="Scripts\jquery-3.1.1.min.map" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\UserStats\UserStatsView.cshtml" />
-    <Content Include="Views\Shared\UserStatsDetailView.cshtml" />
+    <Content Include="Views\Statistics\StatisticsView.cshtml" />
+    <Content Include="Views\Shared\UserStatisticsView.cshtml" />
     <Content Include="Views\Week\WeekView.cshtml" />
     <Content Include="Views\Account\LoginView.cshtml" />
     <Content Include="Views\Shared\SectionsView.cshtml" />

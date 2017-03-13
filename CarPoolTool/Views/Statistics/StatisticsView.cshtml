@@ -14,7 +14,7 @@
         foreach (var item in Model)
         {
             ViewData["rank"] = i + 1;
-            @Html.Partial("UserStatsDetailView", item);
+            @Html.Partial("UserStatisticsView", item);
             i++;
         }
     }

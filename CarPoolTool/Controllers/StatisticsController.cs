@@ -8,7 +8,7 @@ using CarPoolTool.Helpers;
 
 namespace CarPoolTool.Controllers
 {
-    public class UserStatsController : Controller
+    public class StatisticsController : Controller
     {
         // GET: UserStats
         public ActionResult Index()
@@ -20,7 +20,7 @@ namespace CarPoolTool.Controllers
                              join b in entities.Totals on a.username equals b.username
                              select new UserTotal() { Total = b, User = a };
 
-            return View("UserStatsView", usertotals.ToList().OrderByDescending((x) => x.Total.driver_month));
+            return View("StatisticsView", usertotals.ToList().OrderByDescending((x) => x.Total.driver_month));
         }
     }
 }

@@ -7,7 +7,7 @@
 
 <h3>Benvenuto @Model.User.display_name! <br /> Le tue statistiche:</h3>
 
-@Html.Partial("UserStatsDetailView", Model)
+@Html.Partial("UserStatisticsView", Model)
 
 <h2>Non sei tu?</h2>
 <a class="ui red labeled icon button" href="@Url.Action("Logout", "Account")">
