@@ -125,6 +125,7 @@ namespace CarPoolTool.Controllers
                 {
                     entities.CarpoolLogs.Remove(driver);
                 }
+                entities.SaveChanges();
             }
 
             var log = (from l in entities.CarpoolLogs where l.data == day && l.username == username select l).FirstOrDefault();
@@ -170,7 +171,7 @@ namespace CarPoolTool.Controllers
             //Update o insert
             entities.SaveChanges();
 
-            return Redirect(Request.UrlReferrer.ToString());
+            return RedirectToAction("Week", new { start = day.Date, skipAheadIfWeekend = false });
         }
 
 
@@ -197,6 +198,24 @@ namespace CarPoolTool.Controllers
             }
 
             return RedirectToAction("Week", new { start = start, skipAheadIfWeekend = false });
+        }
+
+        [HttpGet]
+        public ActionResult DayEdit(DateTime day)
+        {
+            day = day.Date;
+            DateTime start = day.Date;
+            ViewBag.Section = ActiveSection.Week;
+
+            if (start.DayOfWeek != DayOfWeek.Monday)
+            {
+                start = GetMonday(start, false);
+            }
+
+            var week = GetWeek(start);
+            var daylog = from d in week where d.Date == day select d;
+
+            return View("WeekEditView", daylog);
         }
 
         [HttpGet]

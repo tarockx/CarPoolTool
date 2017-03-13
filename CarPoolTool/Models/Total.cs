@@ -18,5 +18,9 @@ namespace CarPoolTool.Models
         public Nullable<int> passenger_total { get; set; }
         public Nullable<int> driver_total { get; set; }
         public Nullable<int> carpool_total { get; set; }
+        public Nullable<int> driver_month { get; set; }
+        public Nullable<int> passenger_month { get; set; }
+        public Nullable<int> absent_total { get; set; }
+        public Nullable<int> absent_month { get; set; }
     }
 }

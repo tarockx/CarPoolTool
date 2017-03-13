@@ -30,7 +30,7 @@
                             </td>
                             <td style="padding:2px;">
                                 <select name="weekdata[@i].Value.Driver" data-index="@i" class="ui fluid dropdown driver-select">
-                                    <option value="">Non selezionato</option>
+                                    <option value="">[nessuna selezione]</option>
                                     @foreach (User user in users)
                                     {
                                         <option value="@user.username" @(day.Userdata[user].Equals(UserStatus.Driver) ? "selected=\"selected\"" : "")>@user.display_name</option>
@@ -63,15 +63,15 @@
         }
     </div>
     <div class="eight wide column">
-        <button class="ui labeled icon green fluid button" onclick="$(this).addClass('loading disabled'); $('#weekForm').submit();">
+        <button class="ui labeled icon green fluid button" onclick="loadAndSubmit(this, $('#weekForm'));">
             <i class="save icon"></i>
             Salva
         </button>
     </div>
     <div class="eight wide column">
-        <a class="ui labeled icon red fluid button" href="@Url.Action("Week",new { start = Model.ElementAt(0).Date.Date, skipAheadIfWeekend = false })">
+        <a class="ui labeled icon red fluid button" onclick="loadAndGo(this);" data-href="@Url.Action("Week",new { start = Model.ElementAt(0).Date.Date, skipAheadIfWeekend = false })">
             <i class="cancel icon"></i>
-            Annulla modifiche
+            Annulla
         </a>
     </div>
         
@@ -81,13 +81,8 @@
 {
     <script>
         $('.driver-select').dropdown({
+            placeholder: false,
             onChange: function (value, text, $selectedItem) {                
-                //if (value) {
-                //    $('.driver-select').find('.dropdown.icon').removeClass('dropdown').addClass('delete').on('click', function () {
-                //        $('.driver-select').dropdown('clear');
-                //        $(this).removeClass('delete').addClass('dropdown');
-                //    });
-                //}
                 if ($selectedItem) {
                     $selectedItem.closest('tbody').find('.passengers-select').dropdown('remove selected', value);
                     $selectedItem.closest('tbody').find('.passengers-select div.menu div.item').removeClass('disabled');
@@ -97,12 +92,5 @@
         });
 
         $('.passengers-select').dropdown();
-
-        //if ($('.driver-select').dropdown('get value')) {
-        //    $('.driver-select').find('.dropdown.icon').removeClass('dropdown').addClass('delete').on('click', function () {
-        //        $('.driver-select').dropdown('clear');
-        //        $(this).removeClass('delete').addClass('dropdown');
-        //    });
-        //}
     </script>
 }

@@ -44,6 +44,10 @@ warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary ke
           <Property Name="passenger_total" Type="int" />
           <Property Name="driver_total" Type="int" />
           <Property Name="carpool_total" Type="int" />
+          <Property Name="absent_total" Type="int" />
+          <Property Name="driver_month" Type="int" />
+          <Property Name="passenger_month" Type="int" />
+          <Property Name="absent_month" Type="int" />
         </EntityType>
         <Association Name="FK_Alert_User">
           <End Role="User" Type="Self.User" Multiplicity="1" />
@@ -78,7 +82,11 @@ warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary ke
     [Totals].[username] AS [username], 
     [Totals].[passenger_total] AS [passenger_total], 
     [Totals].[driver_total] AS [driver_total], 
-    [Totals].[carpool_total] AS [carpool_total]
+    [Totals].[carpool_total] AS [carpool_total], 
+    [Totals].[absent_total] AS [absent_total], 
+    [Totals].[driver_month] AS [driver_month], 
+    [Totals].[passenger_month] AS [passenger_month], 
+    [Totals].[absent_month] AS [absent_month]
     FROM [dbo].[Totals] AS [Totals]</DefiningQuery>
           </EntitySet>
           <AssociationSet Name="FK_Alert_User" Association="Self.FK_Alert_User">
@@ -124,6 +132,10 @@ warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary ke
           <Property Name="passenger_total" Type="Int32" />
           <Property Name="driver_total" Type="Int32" />
           <Property Name="carpool_total" Type="Int32" />
+          <Property Name="driver_month" Type="Int32" />
+          <Property Name="passenger_month" Type="Int32" />
+          <Property Name="absent_total" Type="Int32" />
+          <Property Name="absent_month" Type="Int32" />
         </EntityType>
         <Association Name="FK_CarpoolLog_User">
           <End Role="User" Type="Self.User" Multiplicity="1" />
@@ -203,6 +215,10 @@ warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary ke
           <EntitySetMapping Name="Totals">
             <EntityTypeMapping TypeName="CarPoolToolModel.Total">
               <MappingFragment StoreEntitySet="Totals">
+                <ScalarProperty Name="absent_month" ColumnName="absent_month" />
+                <ScalarProperty Name="absent_total" ColumnName="absent_total" />
+                <ScalarProperty Name="passenger_month" ColumnName="passenger_month" />
+                <ScalarProperty Name="driver_month" ColumnName="driver_month" />
                 <ScalarProperty Name="username" ColumnName="username" />
                 <ScalarProperty Name="passenger_total" ColumnName="passenger_total" />
                 <ScalarProperty Name="driver_total" ColumnName="driver_total" />

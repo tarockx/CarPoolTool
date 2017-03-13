@@ -22,7 +22,7 @@
         </div>
 
         <!-- Main content -->
-        <div class="ui basic segment" style="margin-bottom:48px;">
+        <div class="ui basic segment" id="mainContent" style="margin-bottom:48px;">
             @RenderBody()
         </div>
 
@@ -33,5 +33,17 @@
         <script src="~/Scripts/semantic.min.js"></script>
         <script src="~/Scripts/calendar.min.js"></script>
         @RenderSection("scripts", required: false)
+
+        <!-- Global utility scripts -->
+        <script>
+            function loadAndGo(caller) {
+                $(caller).addClass('disabled loading');
+                window.location.href = $(caller).attr('data-href');
+            }
+            function loadAndSubmit(caller, form) {
+                $(caller).addClass('disabled loading');
+                $(form).submit();
+            }
+        </script>
     </body>
 </html>

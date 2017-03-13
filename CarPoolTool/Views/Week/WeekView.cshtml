@@ -9,14 +9,14 @@
 
 <div class="ui grid">
     <div class="three wide column">
-        <a class="ui icon fluid button" href="@Url.Action("Week", new { start = Model.ElementAt(0).Date.AddDays(-7), skipAheadIfWeekend = false })">
+        <a class="ui blue icon fluid button" onclick="loadAndGo(this);" data-href="@Url.Action("Week", new { start = Model.ElementAt(0).Date.AddDays(-7), skipAheadIfWeekend = false })">
             <i class="ui chevron left icon"></i>
         </a>
     </div>
 
     <div class="ten wide column" style="padding-left:0;padding-right:0;">
         <div class="ui calendar" id="dateSelector">
-            <div class="ui labeled icon fluid button">
+            <div class="ui blue labeled icon fluid button">
                 <i class="ui calendar icon"></i>
                 Settimana del @Model.ElementAt(0).Date.ToString("dd/MM")
             </div>
@@ -24,19 +24,19 @@
     </div>
 
     <div class="three wide column">
-        <a class="ui icon fluid button" href="@Url.Action("Week", new { start = Model.ElementAt(0).Date.AddDays(7), skipAheadIfWeekend = false })">
+        <a class="ui blue icon fluid button" onclick="loadAndGo(this);" data-href="@Url.Action("Week", new { start = Model.ElementAt(0).Date.AddDays(7), skipAheadIfWeekend = false })">
             <i class="ui chevron right icon"></i>
         </a>
     </div>
 
     <div class="ui eight wide column" style="padding-top:0px; padding-bottom:0px;">
-        <a class="ui labeled icon fluid button" href="@Url.Action("WeekEdit", new { start = Model.ElementAt(0).Date })">
+        <a class="ui blue labeled icon fluid button" onclick="loadAndGo(this);" data-href="@Url.Action("WeekEdit", new { start = Model.ElementAt(0).Date })">
             <i class="ui edit icon"></i>
-            Edit massivo
+            Modifica settimana
         </a>
     </div>
     <div class="ui eight wide column" style="padding-top:0px; padding-bottom:0px;">
-        <a class="ui labeled icon fluid button" onclick="$('#popupReset').modal('show');">
+        <a class="ui blue labeled icon fluid button" onclick="$('#popupReset').modal('show');">
             <i class="ui trash icon"></i>
             Resetta settimana
         </a>
@@ -50,7 +50,7 @@
                 <p>Sei sicuro?</p>
             </div>
             <div class="ui actions">
-                <a class="ui green approve button" href="@Url.Action("WeekReset", new { start = Model.ElementAt(0).Date })">Si, resetta</a>
+                <a class="ui green button" onclick="loadAndGo(this);" data-href="@Url.Action("WeekReset", new { start = Model.ElementAt(0).Date })">Si, resetta</a>
                 <button class="ui red cancel button">No, annulla</button>
             </div>
         </div>
@@ -136,52 +136,6 @@
                             </tbody>
                         </table>
 
-                        @if (day.Alerts != null && day.Alerts.Count() > 0)
-                        {
-                            foreach (Alert alert in day.Alerts)
-                            {
-                                <div class="ui icon blue message">
-                                    <i class="warning icon"></i>
-                                    <div style="width:100%;">
-                                        <i class="ui user icon"></i><strong>@alert.User.display_name</strong>:
-                                        @alert.message
-                                    </div>
-                                    <div>
-                                        <a class="ui red icon button" href="@Url.Action("DeleteAlert", new { start = day.Date, alertId = alert.id })">
-                                            <i class="trash icon"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            }
-                        }
-                        <div style="overflow:hidden;">
-                            <button class="ui labeled right floated icon button" onclick="$('#@("popupAddAlert" + i.ToString())').modal('show');">
-                                <i class="ui plus icon"></i>
-                                Aggiungi avviso
-                            </button>
-
-                            <div class="ui modal" id="@("popupAddAlert" + i.ToString())">
-                                <div class="ui header">
-                                    Nuovo avviso per @day.Date.ToString("dddd dd")
-                                </div>
-                                <div class="ui content">
-                                    <p>Stai inserendo un nuovo avviso. Inserisci il testo:</p>
-                                    @using (Html.BeginForm("InsertAlert", "Week", new { start = day.Date}, FormMethod.Post, new { id = "alertForm" + i.ToString(), @class = "ui form" }))
-                                    {
-                                        <input type="hidden" name="alert.username" value="@loggeduser.username"/>
-                                        <input type="hidden" name="alert.data" value="@day.Date.Date" />
-                                        <input type="hidden" name="alert.severity" value="warning" />
-                                        <textarea name="alert.message" placeholder="Inserisci un messaggio..."></textarea>
-                                    }
-                                </div>
-                                <div class="ui actions">
-                                    <button type="submit" form="@("alertForm" + i.ToString())" class="ui green button">Inserisci</button>
-                                    <button class="ui red cancel button">Annulla</button>
-                                </div>
-                            </div>
-                        </div>
-
-
                         <!-- Messaggio non segnato -->
                         @if (day.Userdata[loggeduser] == UserStatus.MissingData)
                         {
@@ -201,6 +155,56 @@
                                 </div>
                             </div>
                         }
+
+                        @if (day.Alerts != null && day.Alerts.Count() > 0)
+                        {
+                            foreach (Alert alert in day.Alerts)
+                            {
+                                <div class="ui icon blue message">
+                                    <i class="warning icon"></i>
+                                    <div style="width:100%;">
+                                        <i class="ui user icon"></i><strong>@alert.User.display_name</strong>:
+                                        @alert.message
+                                    </div>
+                                    <div>
+                                        <a class="ui red icon button" onclick="loadAndGo(this);" data-href="@Url.Action("DeleteAlert", new { start = day.Date, alertId = alert.id })">
+                                            <i class="trash icon"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        <div style="overflow:hidden;">
+                            <a class="ui blue labeled right floated icon button" style="margin-bottom:5px;" onclick="loadAndGo(this);" data-href="@Url.Action("DayEdit", new { day = day.Date })">
+                                <i class="ui edit icon"></i>
+                                Modifica giorno
+                            </a>
+
+                            <button class="ui blue labeled right floated icon button" style="margin-bottom:5px;" onclick="$('#@("popupAddAlert" + i.ToString())').modal('show');">
+                                <i class="ui plus icon"></i>
+                                Aggiungi avviso
+                            </button>
+
+                            <div class="ui modal" id="@("popupAddAlert" + i.ToString())">
+                                <div class="ui header">
+                                    Nuovo avviso per @day.Date.ToString("dddd dd")
+                                </div>
+                                <div class="ui content">
+                                    <p>Stai inserendo un nuovo avviso. Inserisci il testo:</p>
+                                    @using (Html.BeginForm("InsertAlert", "Week", new { start = day.Date}, FormMethod.Post, new { id = "alertForm" + i.ToString(), @class = "ui form" }))
+                                    {
+                                        <input type="hidden" name="alert.username" value="@loggeduser.username"/>
+                                        <input type="hidden" name="alert.data" value="@day.Date.Date" />
+                                        <input type="hidden" name="alert.severity" value="warning" />
+                                        <textarea name="alert.message" placeholder="Inserisci un messaggio..."></textarea>
+                                    }
+                                </div>
+                                <div class="ui actions">
+                                    <button type="submit" onclick="loadAndSubmit(this, $('#@("alertForm" + i.ToString())'));" class="ui green button">Inserisci</button>
+                                    <button class="ui red cancel button">Annulla</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 <!-- Modification Popup -->
@@ -220,38 +224,46 @@
                     <div class="actions">
                         @using (Html.BeginForm("Update", "Week", new { day = day.Date, username = loggeduser.username }, FormMethod.Post))
                         {
-                            var driver = day.GetByStatus(UserStatus.Driver).FirstOrDefault();
-                            if (driver == null)
+                            var myStatus = day.Userdata[loggeduser];
+                            if(myStatus != UserStatus.Driver)
                             {
-                                <button type="submit" class="width165 ui labeled teal icon button" style="margin-bottom: 5px;" name="status" value="Driver">
-                                    <i class="car icon"></i>
-                                    Guido io!
-                                </button>
-                            }
-                            else
-                            {
-                                <div class="ui buttons">
+                                var driver = day.GetByStatus(UserStatus.Driver).FirstOrDefault();
+                                if (driver == null)
+                                {
+                                    <button class="width190 ui labeled teal icon button" onclick="loadAndSubmit(this, $(this).closest('form'));" style="margin-bottom: 5px;" name="status" value="Driver">
+                                        <i class="car icon"></i>
+                                        Guido io!
+                                    </button>
+                                }
+                                else
+                                {
                                     <input type="hidden" name="status" value="Driver"/>
-                                    <button type="submit" class="width165 ui labeled teal icon button" style="margin-bottom: 5px;" name="formerDriverStatus" value="Passenger">
+                                    <button class="width190 ui labeled teal icon button" onclick="loadAndSubmit(this, $(this).closest('form'));" style="margin-bottom: 5px;" name="formerDriverStatus" value="Passenger">
                                         <i class="car icon"></i>
                                         Guido io! (@driver.display_name passeggero)
                                     </button>
-                                    <button type="submit" class="width165 ui labeled teal icon button" style="margin-bottom: 5px;" name="formerDriverStatus" value="Absent">
+                                    <button class="width190 ui labeled teal icon button" onclick="loadAndSubmit(this, $(this).closest('form'));" style="margin-bottom: 5px;" name="formerDriverStatus" value="Absent">
                                         <i class="car icon"></i>
                                         Guido io! (@driver.display_name assente / da solo)
                                     </button>
-                                </div>
+                                }
                             }
 
-                            <button type="submit" class="width165 ui labeled blue icon button" style="margin-bottom: 5px;" name="status" value="Passenger">
-                                <i class="road icon"></i>
-                                Passeggero
-                            </button>
+                            if(myStatus != UserStatus.Passenger)
+                            {
+                                <button class="width190 ui labeled blue icon button" onclick="loadAndSubmit(this, $(this).closest('form'));" style="margin-bottom: 5px;" name="status" value="Passenger">
+                                    <i class="road icon"></i>
+                                    Passeggero
+                                </button>
+                            }
 
-                            <button type="submit" class="width165 ui labeled red icon button" style="margin-bottom: 5px;" name="status" value="Absent">
-                                <i class="remove user icon"></i>
-                                Da solo / ferie
-                            </button>
+                            if (myStatus != UserStatus.Absent)
+                            {
+                                <button class="width190 ui labeled red icon button" onclick="loadAndSubmit(this, $(this).closest('form'));" style="margin-bottom: 5px;" name="status" value="Absent">
+                                    <i class="remove user icon"></i>
+                                    Da solo / ferie
+                                </button>
+                            }
                         }
                     </div>
                 </div>

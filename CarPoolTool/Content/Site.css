@@ -21,12 +21,15 @@ textarea {
     color:darkgoldenrod;
 }
 
-.stat-card{
+#mainContent .stat-card{
     min-width: 315px;
+    margin-left:10px;
+    margin-right:10px;
 }
 
-.width165{
-    width: 165px;
+#mainContent .stat-label{
+    margin-top:5px;
+    margin-bottom: 2px;
 }
 
 #footer {

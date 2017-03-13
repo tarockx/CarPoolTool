@@ -29,9 +29,38 @@
         <div class="header">
             @Model.User.display_name
         </div>
-        <div class="meta">
-            @@@Model.User.username
+
+        <i class="stat-label ui red ribbon label">Mese</i>
+        <div class="description">
+            <div class="ui three mini statistics">
+                <div class="teal statistic">
+                    <div class="value">
+                        <i class="car icon"></i> @Model.Total.driver_month
+                    </div>
+                    <div class="label">
+                        guidatore
+                    </div>
+                </div>
+                <div class="blue statistic">
+                    <div class="value">
+                        <i class="road icon"></i> @Model.Total.passenger_month
+                    </div>
+                    <div class="label">
+                        passeggero
+                    </div>
+                </div>
+                <div class="red statistic">
+                    <div class="value">
+                        <i class="remove user icon"></i> @Model.Total.absent_month
+                    </div>
+                    <div class="label">
+                        solo/ferie
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <i class="stat-label ui blue ribbon label">Totale</i>
         <div class="description">
             <div class="ui three mini statistics">
                 <div class="teal statistic">
@@ -52,14 +81,16 @@
                 </div>
                 <div class="red statistic">
                     <div class="value">
-                        <i class="line chart icon"></i> @MathHelper.ComputeDriveRunsRatio(Model.Total.driver_total.Value, Model.Total.carpool_total.Value).ToString("N2")
+                        <i class="remove user icon"></i> @Model.Total.absent_total
                     </div>
                     <div class="label">
-                        guide/corse
+                        solo/ferie
                     </div>
                 </div>
             </div>
         </div>
+
+
     </div>
 </div>
 
