@@ -244,3 +244,4 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 /CarPoolTool/ConnectionStrings.config
+/CarPoolTool/App_Data/carpooltool-gcalendar-secret.json

@@ -30,7 +30,7 @@
             <PropertyRef Name="username" />
           </Key>
           <Property Name="username" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="password" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="password" Type="nvarchar" MaxLength="512" Nullable="false" />
           <Property Name="admin" Type="smallint" Nullable="false" />
           <Property Name="display_name" Type="nvarchar" MaxLength="50" />
         </EntityType>
@@ -118,7 +118,7 @@ warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary ke
             <PropertyRef Name="username" />
           </Key>
           <Property Name="username" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="password" Type="String" MaxLength="512" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="admin" Type="Int16" Nullable="false" />
           <Property Name="display_name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="CarpoolLogs" Relationship="Self.FK_CarpoolLog_User" FromRole="User" ToRole="CarpoolLog" />

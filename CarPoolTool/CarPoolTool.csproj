@@ -317,6 +317,7 @@
     <Content Include="Content\themes\material\assets\fonts\icons.eot" />
     <Content Include="Content\themes\material\assets\fonts\icons.ttf" />
     <Content Include="Content\themes\material\assets\fonts\icons.woff" />
+    <Content Include="App_Data\carpooltool-gcalendar-secret.json" />
     <None Include="Properties\PublishProfiles\carpooltool - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\carpooltool - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\carpooltool - Web Deploy %282%29.pubxml" />
@@ -422,7 +423,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Views\Home\" />
   </ItemGroup>
   <ItemGroup>

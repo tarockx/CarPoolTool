@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -11,6 +13,23 @@ namespace CarPoolTool.Controllers
 {
     public class AccountController : Controller
     {
+
+        private String sha256(String value)
+        {
+            StringBuilder Sb = new StringBuilder();
+
+            using (SHA256 hash = SHA256Managed.Create())
+            {
+                Encoding enc = Encoding.UTF8;
+                Byte[] result = hash.ComputeHash(enc.GetBytes(value));
+
+                foreach (Byte b in result)
+                    Sb.Append(b.ToString("x2"));
+            }
+
+            return Sb.ToString();
+        }
+
         public ActionResult Index()
         {
             ViewBag.Section = ActiveSection.Account;
@@ -41,9 +60,13 @@ namespace CarPoolTool.Controllers
         [HttpPost]
         public ActionResult Login(string user, string pass, string returnUrl)
         {
+            ViewBag.Section = ActiveSection.Account;
+
             CarPoolToolEntities entities = new CarPoolToolEntities();
 
-            var validUsers = from u in entities.Users where u.username.Equals(user) && u.password.Equals(pass) select u;
+            string passHashStr = sha256(pass);
+
+            var validUsers = from u in entities.Users where u.username.Equals(user) && u.password.Equals(passHashStr) select u;
             if (validUsers == null || validUsers.Count() == 0)
             {
                 TempData["loginError"] = "Username sconosciuto o password non corretta.";

@@ -85,6 +85,7 @@
             onChange: function (value, text, $selectedItem) {                
                 if ($selectedItem) {
                     $selectedItem.closest('tbody').find('.passengers-select').dropdown('remove selected', value);
+                    $selectedItem.closest('tbody').find('.passengers-select select option').removeAttr('disabled');
                     $selectedItem.closest('tbody').find('.passengers-select div.menu div.item').removeClass('disabled');
                     $selectedItem.closest('tbody').find('.passengers-select div.menu div.item[data-value="' + value + '"]').addClass('disabled');
                 }
