@@ -8,6 +8,52 @@ namespace CarPoolTool.Helpers
 {
     public class EntitiesHelper
     {
+        public static IEnumerable<DayLog> GetWeek(DateTime start)
+        {
+            CarPoolToolEntities entities = new CarPoolToolEntities();
+
+            DateTime end = start.AddDays(5);
+
+            var log = from a in entities.CarpoolLogs
+                      where a.data >= start && a.data < end
+                      orderby a.data
+                      select a;
+
+            Dictionary<DateTime, DayLog> week = new Dictionary<DateTime, DayLog>();
+            foreach (var item in log.ToList())
+            {
+                if (!week.ContainsKey(item.data.Date))
+                {
+                    week[item.data.Date] = new DayLog(item.data.Date);
+                }
+                week[item.data.Date].InsertLog(item);
+            }
+
+            //Fill missing users and/or days
+            var users = entities.Users;
+            for (int i = 0; i < 5; i++)
+            {
+                DateTime curDay = start.AddDays(i);
+                if (!week.ContainsKey(curDay))
+                {
+                    week[curDay] = new DayLog(curDay);
+                }
+                week[curDay].FillMissingUsers(users, UserStatus.MissingData);
+            }
+
+
+            //Load alerts
+            foreach (var daylog in week.Values)
+            {
+                var alerts = from a in entities.Alerts
+                             where a.data == daylog.Date
+                             select a;
+                daylog.Alerts = alerts.ToList();
+            }
+
+            return week.Values.OrderBy(x => x.Date);
+        }
+
         public static void PersistDayLog(DayLog daylog, UserStatus? fillStatus)
         {
             CarPoolToolEntities entities = new CarPoolToolEntities();
