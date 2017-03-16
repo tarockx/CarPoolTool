@@ -14,6 +14,7 @@
           <Property Name="message" Type="nvarchar(max)" Nullable="false" />
           <Property Name="severity" Type="nvarchar" MaxLength="20" Nullable="false" />
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="weekly" Type="smallint" Nullable="false" />
         </EntityType>
         <EntityType Name="CarpoolLog">
           <Key>
@@ -173,6 +174,7 @@ warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary ke
           <Property Name="severity" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="User" Relationship="CarPoolToolModel.FK_Alert_User" FromRole="Alert" ToRole="User" />
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="weekly" Type="Int16" Nullable="false" />
         </EntityType>
         <Association Name="FK_Alert_User">
           <End Type="CarPoolToolModel.User" Role="User" Multiplicity="1" />
@@ -229,6 +231,7 @@ warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary ke
           <EntitySetMapping Name="Alerts">
             <EntityTypeMapping TypeName="CarPoolToolModel.Alert">
               <MappingFragment StoreEntitySet="Alert">
+                <ScalarProperty Name="weekly" ColumnName="weekly" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="severity" ColumnName="severity" />
                 <ScalarProperty Name="message" ColumnName="message" />

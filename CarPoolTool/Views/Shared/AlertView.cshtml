@@ -1,0 +1,24 @@
+﻿@using CarPoolTool.Models;
+@model CarPoolTool.Models.DayLog
+
+@if (Model.Alerts != null && Model.Alerts.Count() > 0)
+{
+    foreach (Alert alert in Model.Alerts)
+    {
+        if (alert.weekly == (int)ViewData["weekly"])
+        {
+            <div class="ui icon blue message">
+                <i class="warning icon"></i>
+                <div style="width:100%;">
+                    <i class="ui user icon"></i><strong>@alert.User.display_name</strong>:
+                    @alert.message
+                </div>
+                <div>
+                    <a class="ui red icon button" onclick="loadAndGo(this);" data-href="@Url.Action("DeleteAlert", new { start = Model.Date, alertId = alert.id })">
+                        <i class="trash icon"></i>
+                    </a>
+                </div>
+            </div>
+        }
+    }
+}

@@ -19,6 +19,7 @@ namespace CarPoolTool.Models
         public string message { get; set; }
         public string severity { get; set; }
         public int id { get; set; }
+        public short weekly { get; set; }
     
         public virtual User User { get; set; }
     }

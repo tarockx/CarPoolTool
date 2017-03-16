@@ -234,6 +234,21 @@ namespace CarPoolTool.Controllers
             return RedirectToAction("Week", new { start = start, skipAheadIfWeekend = false });
         }
 
+        [HttpPost]
+        public ActionResult InsertWeekAlert(Alert alert, DateTime start)
+        {
+            ViewBag.Section = ActiveSection.Week;
+
+            CarPoolToolEntities entities = new CarPoolToolEntities();
+            if (alert != null && alert.isValid())
+            {
+                alert.weekly = 1;
+                entities.Alerts.Add(alert);
+                entities.SaveChanges();
+            }
+            return RedirectToAction("Week", new { start = start, skipAheadIfWeekend = false });
+        }
+
         [HttpGet]
         public ActionResult DeleteAlert(DateTime start, int alertId)
         {

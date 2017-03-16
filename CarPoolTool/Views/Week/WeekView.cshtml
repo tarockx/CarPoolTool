@@ -5,6 +5,7 @@
 @{
     ViewBag.Title = "Calendario";
     User loggeduser = CarPoolTool.Models.User.GetByUsername(User.Identity.Name);
+    DayLog firstDay = Model.ElementAt(0);
 }
 
 <div class="ui grid">
@@ -30,15 +31,16 @@
     </div>
 
     <div class="ui eight wide column" style="padding-top:0px; padding-bottom:0px;">
-        <a class="ui blue labeled icon fluid button" onclick="loadAndGo(this);" data-href="@Url.Action("WeekEdit", new { start = Model.ElementAt(0).Date })">
+        <a class="ui blue labeled icon fluid compact button" onclick="loadAndGo(this);" data-href="@Url.Action("WeekEdit", new { start = Model.ElementAt(0).Date })">
             <i class="ui edit icon"></i>
-            Modifica settimana
+            Edit
         </a>
     </div>
+
     <div class="ui eight wide column" style="padding-top:0px; padding-bottom:0px;">
-        <a class="ui blue labeled icon fluid button" onclick="$('#popupReset').modal('show');">
+        <a class="ui blue labeled icon compact fluid button" onclick="$('#popupReset').modal('show');">
             <i class="ui trash icon"></i>
-            Resetta settimana
+            Reset
         </a>
 
         <div class="ui modal" id="popupReset">
@@ -54,6 +56,37 @@
                 <button class="ui red cancel button">No, annulla</button>
             </div>
         </div>
+    </div>
+    <div class="ui sixteen wide column" style="padding-bottom:0px;">
+        <button class="ui blue labeled fluid compact icon button" style="margin-bottom:5px;" onclick="$('#popupAddWeekAlert').modal('show');">
+            <i class="ui plus icon"></i>
+            Avviso settimanale
+        </button>
+
+        <div class="ui modal" id="popupAddWeekAlert">
+            <div class="ui header">
+                Nuovo avviso per la settimana del @firstDay.Date.ToString("dd/MM")
+            </div>
+            <div class="ui content">
+                <p>Stai inserendo un nuovo avviso per l'intera settimana. Inserisci il testo:</p>
+                @using (Html.BeginForm("InsertWeekAlert", "Week", new { start = firstDay.Date.Date }, FormMethod.Post, new { id = "weekAlertForm", @class = "ui form" }))
+                {
+                    <input type="hidden" name="alert.username" value="@loggeduser.username" />
+                    <input type="hidden" name="alert.data" value="@firstDay.Date.Date" />
+                    <input type="hidden" name="alert.severity" value="warning" />
+                    <input type="hidden" name="alert.weekly" value="1" />
+                    <textarea name="alert.message" placeholder="Inserisci un messaggio..."></textarea>
+                }
+            </div>
+            <div class="ui actions">
+                <button type="submit" onclick="loadAndSubmit(this, $('#weekAlertForm'));" class="ui green button">Inserisci</button>
+                <button class="ui red cancel button">Annulla</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui sixteen wide column">
+        @Html.Partial("AlertView", firstDay, new ViewDataDictionary { { "weekly", 1 } })
     </div>
 
     <div class="ui sixteen wide column">
@@ -78,7 +111,7 @@
                         @CultureInfo.CurrentCulture.TextInfo.ToTitleCase(day.Date.ToString("dddd dd"))
 
                         <span style="float:right;">
-                            @if(day.Alerts != null && day.Alerts.Count() > 0)
+                            @if(day.DailyAlerts != null && day.DailyAlerts.Count() > 0)
                             {
                                 <i class="red warning sign icon"></i>
                             }
@@ -156,24 +189,8 @@
                             </div>
                         }
 
-                        @if (day.Alerts != null && day.Alerts.Count() > 0)
-                        {
-                            foreach (Alert alert in day.Alerts)
-                            {
-                                <div class="ui icon blue message">
-                                    <i class="warning icon"></i>
-                                    <div style="width:100%;">
-                                        <i class="ui user icon"></i><strong>@alert.User.display_name</strong>:
-                                        @alert.message
-                                    </div>
-                                    <div>
-                                        <a class="ui red icon button" onclick="loadAndGo(this);" data-href="@Url.Action("DeleteAlert", new { start = day.Date, alertId = alert.id })">
-                                            <i class="trash icon"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            }
-                        }
+                        @Html.Partial("AlertView", day, new ViewDataDictionary { { "weekly", 0 } })
+
                         <div style="overflow:hidden;">
                             <a class="ui blue labeled right floated icon button" style="margin-bottom:5px;" onclick="loadAndGo(this);" data-href="@Url.Action("DayEdit", new { day = day.Date })">
                                 <i class="ui edit icon"></i>
@@ -196,6 +213,7 @@
                                         <input type="hidden" name="alert.username" value="@loggeduser.username"/>
                                         <input type="hidden" name="alert.data" value="@day.Date.Date" />
                                         <input type="hidden" name="alert.severity" value="warning" />
+                                        <input type="hidden" name="alert.weekly" value="0" />
                                         <textarea name="alert.message" placeholder="Inserisci un messaggio..."></textarea>
                                     }
                                 </div>

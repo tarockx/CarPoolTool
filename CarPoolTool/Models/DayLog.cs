@@ -11,6 +11,20 @@ namespace CarPoolTool.Models
         public Dictionary<User, UserStatus> Userdata { get; set; } = new Dictionary<User, UserStatus>();
 
         public IEnumerable<Alert> Alerts { get; set; }
+
+        public IEnumerable<Alert> WeeklyAlerts {
+            get {
+                return (from a in Alerts where a.weekly == 1 select a);
+            }
+        }
+
+        public IEnumerable<Alert> DailyAlerts
+        {
+            get
+            {
+                return (from a in Alerts where a.weekly == 0 select a);
+            }
+        }
         public string[] Passengers {
             get
             {
