@@ -51,7 +51,7 @@ namespace CarPoolTool.Helpers
                 EventsResource.ListRequest request = service.Events.List(calId);
                 request.TimeMin = start;
                 request.TimeMax = end;
-                request.ShowDeleted = true;
+                request.ShowDeleted = false;
                 request.SingleEvents = true;
                 request.MaxResults = 10;
                 request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
@@ -64,13 +64,13 @@ namespace CarPoolTool.Helpers
                     {
                         if (calEvent.Creator.Email.Equals(serviceAccountEmail))
                         {
-                            service.Events.Delete(calId, calEvent.Id);
+                            service.Events.Delete(calId, calEvent.Id).Execute();
                         }
                     }
                 }
 
                 // Write week events
-                var week = EntitiesHelper.GetWeek(start.Date);
+                var week = EntitiesHelper.GetWeek(start.Date, end.Date);
                 foreach (var day in week)
                 {
                     User driver = day.GetByStatus(UserStatus.Driver).FirstOrDefault();
@@ -83,7 +83,7 @@ namespace CarPoolTool.Helpers
                     }
                     else
                     {
-                        summary = driver != null ? "CPT: guida " + driver.display_name : "CPT: GUIDATORE NON SELEZIONATO";
+                        summary = driver != null ? "CPT: " + driver.display_name : "CPT: NESSUN GUIDATORE";
                         if(absent != null && absent.Count > 0)
                         {
                             summary += " - Assenti: ";
@@ -93,13 +93,19 @@ namespace CarPoolTool.Helpers
                             }
                         }
                     }
+
+                    Event body = new Event();
+                    body.Summary = summary;
+                    body.Start = new EventDateTime() { Date = day.Date.Date.ToString("yyyy-MM-dd") };
+                    body.End = new EventDateTime() { Date = day.Date.Date.AddDays(1).ToString("yyyy-MM-dd") };
+                    service.Events.Insert(body, calId).Execute();
                 }
 
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                Console.WriteLine(ex.Message);
             }
         }
     }

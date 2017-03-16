@@ -44,6 +44,11 @@
                 $(caller).addClass('disabled loading');
                 $(form).submit();
             }
+            function loadAndSubmit(caller, form, extraName, extraValue) {
+                $(caller).addClass('disabled loading');
+                $(form).append('<input type="hidden" name="' + extraName + '" value="'+ extraValue +'" />');
+                $(form).submit();
+            }
         </script>
     </body>
 </html>

@@ -8,11 +8,13 @@ namespace CarPoolTool.Helpers
 {
     public class EntitiesHelper
     {
-        public static IEnumerable<DayLog> GetWeek(DateTime start)
+        public static IEnumerable<DayLog> GetWeek(DateTime start, int days)
+        {
+            return GetWeek(start, start.AddDays(days));
+        }
+        public static IEnumerable<DayLog> GetWeek(DateTime start, DateTime end)
         {
             CarPoolToolEntities entities = new CarPoolToolEntities();
-
-            DateTime end = start.AddDays(5);
 
             var log = from a in entities.CarpoolLogs
                       where a.data >= start && a.data < end
@@ -31,14 +33,15 @@ namespace CarPoolTool.Helpers
 
             //Fill missing users and/or days
             var users = entities.Users;
-            for (int i = 0; i < 5; i++)
+            DateTime curDay = start;
+            while(curDay < end)
             {
-                DateTime curDay = start.AddDays(i);
                 if (!week.ContainsKey(curDay))
                 {
                     week[curDay] = new DayLog(curDay);
                 }
                 week[curDay].FillMissingUsers(users, UserStatus.MissingData);
+                curDay = curDay.AddDays(1);
             }
 
 

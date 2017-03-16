@@ -43,8 +43,6 @@ namespace CarPoolTool.Controllers
 
         public ActionResult Week(DateTime start, bool skipAheadIfWeekend)
         {
-            CalendarHelper.UpdateGoogleCalendar(GetMonday(DateTime.Now, false), GetMonday(DateTime.Now, false).AddDays(5));
-
             ViewBag.Section = ActiveSection.Week;
 
             DayOfWeek activeDay = start.DayOfWeek;
@@ -58,7 +56,7 @@ namespace CarPoolTool.Controllers
                 activeDay = skipAheadIfWeekend ? DayOfWeek.Monday : DayOfWeek.Friday;
             }
 
-            var week = EntitiesHelper.GetWeek(start);
+            var week = EntitiesHelper.GetWeek(start, 5);
 
             ViewBag.ActiveDay = activeDay;
             return View("WeekView", week);
@@ -66,7 +64,7 @@ namespace CarPoolTool.Controllers
 
 
         [HttpPost]
-        public ActionResult Update(DateTime day, string username, UserStatus status, UserStatus? formerDriverStatus)
+        public ActionResult Update(DateTime day, string username, UserStatus status, UserStatus? formerDriverStatus, bool updateGoogleCalendar)
         {
             day = day.Date;
             CarPoolToolEntities entities = new CarPoolToolEntities();
@@ -78,12 +76,8 @@ namespace CarPoolTool.Controllers
                 {
                     driver.driver = 0;
                     driver.passenger = formerDriverStatus == UserStatus.Absent ? (short)0 : (short)1;
+                    entities.SaveChanges();
                 }
-                else
-                {
-                    entities.CarpoolLogs.Remove(driver);
-                }
-                entities.SaveChanges();
             }
 
             var log = (from l in entities.CarpoolLogs where l.data == day && l.username == username select l).FirstOrDefault();
@@ -129,6 +123,12 @@ namespace CarPoolTool.Controllers
             //Update o insert
             entities.SaveChanges();
 
+            //Update calendar
+            if (updateGoogleCalendar)
+            {
+                CalendarHelper.UpdateGoogleCalendar(day.Date, day.Date.AddDays(1));
+            }
+
             return RedirectToAction("Week", new { start = day.Date, skipAheadIfWeekend = false });
         }
 
@@ -170,7 +170,7 @@ namespace CarPoolTool.Controllers
                 start = GetMonday(start, false);
             }
 
-            var week = EntitiesHelper.GetWeek(start);
+            var week = EntitiesHelper.GetWeek(start, 5);
             var daylog = from d in week where d.Date == day select d;
 
             return View("WeekEditView", daylog);
@@ -186,13 +186,13 @@ namespace CarPoolTool.Controllers
                 start = GetMonday(start, false);
             }
 
-            var week = EntitiesHelper.GetWeek(start);
+            var week = EntitiesHelper.GetWeek(start, 5);
 
             return View("WeekEditView", week);
         }
 
         [HttpPost]
-        public ActionResult WeekEdit(DateTime day, Dictionary<DayOfWeek, DayLog> weekdata)
+        public ActionResult WeekEdit(DateTime day, Dictionary<DayOfWeek, DayLog> weekdata, bool updateGoogleCalendar)
         {
             ViewBag.Section = ActiveSection.Week;
 
@@ -204,6 +204,18 @@ namespace CarPoolTool.Controllers
             }
 
             entities.SaveChanges();
+
+            if (updateGoogleCalendar)
+            {
+                try
+                {
+                    CalendarHelper.UpdateGoogleCalendar(weekdata.First().Value.Date, weekdata.Last().Value.Date.AddDays(1));
+                }
+                catch (Exception)
+                {
+                    
+                }
+            }
 
             return RedirectToAction("Week", new { start = day, skipAheadIfWeekend = false });
         }
