@@ -9,6 +9,7 @@
 }
 
 <div class="ui grid">
+    <!-- Selettore settimana -->
     <div class="three wide column">
         <a class="ui blue icon fluid button" onclick="loadAndGo(this);" data-href="@Url.Action("Week", new { start = Model.ElementAt(0).Date.AddDays(-7), skipAheadIfWeekend = false })">
             <i class="ui chevron left icon"></i>
@@ -30,60 +31,64 @@
         </a>
     </div>
 
-    <div class="ui eight wide column" style="padding-top:0px; padding-bottom:0px;">
-        <a class="ui blue labeled icon fluid compact button" onclick="loadAndGo(this);" data-href="@Url.Action("WeekEdit", new { start = Model.ElementAt(0).Date })">
-            <i class="ui edit icon"></i>
-            Edit
-        </a>
-    </div>
+    <!-- Bottoni editing settimana -->
+    <div class="equal width row" style="padding:0px;">
+        <div class="ui column" style="padding-top:0px; padding-bottom:0px;">
+            <a class="ui blue icon fluid button" onclick="loadAndGo(this);" data-href="@Url.Action("WeekEdit", new { start = Model.ElementAt(0).Date })">
+                <i class="ui edit icon"></i>
+                Edit
+            </a>
+        </div>
 
-    <div class="ui eight wide column" style="padding-top:0px; padding-bottom:0px;">
-        <a class="ui blue labeled icon compact fluid button" onclick="$('#popupReset').modal('show');">
-            <i class="ui trash icon"></i>
-            Reset
-        </a>
+        <div class="ui column" style="padding:0px;">
+            <a class="ui blue icon fluid button" onclick="$('#popupReset').modal('show');">
+                <i class="ui trash icon"></i>
+                Reset
+            </a>
 
-        <div class="ui modal" id="popupReset">
-            <div class="ui header">
-                Reset settimana
+            <div class="ui modal" id="popupReset">
+                <div class="ui header">
+                    Reset settimana
+                </div>
+                <div class="ui content">
+                    <p>La settimana corrente verrà resettata, tutti gli utenti per questa settimana verranno impostati come "Non Segnato"</p>
+                    <p>Sei sicuro?</p>
+                </div>
+                <div class="ui actions">
+                    <a class="ui green button" onclick="loadAndGo(this);" data-href="@Url.Action("WeekReset", new { start = Model.ElementAt(0).Date })">Si, resetta</a>
+                    <button class="ui red cancel button">No, annulla</button>
+                </div>
             </div>
-            <div class="ui content">
-                <p>La settimana corrente verrà resettata, tutti gli utenti per questa settimana verranno impostati come "Non Segnato"</p>
-                <p>Sei sicuro?</p>
-            </div>
-            <div class="ui actions">
-                <a class="ui green button" onclick="loadAndGo(this);" data-href="@Url.Action("WeekReset", new { start = Model.ElementAt(0).Date })">Si, resetta</a>
-                <button class="ui red cancel button">No, annulla</button>
+        </div>
+        <div class="ui  column" style="padding-bottom:0px;">
+            <button class="ui blue fluid icon button" style="margin-bottom:5px;" onclick="$('#popupAddWeekAlert').modal('show');">
+                <i class="ui plus icon"></i>
+                Avviso
+            </button>
+
+            <div class="ui modal" id="popupAddWeekAlert">
+                <div class="ui header">
+                    Nuovo avviso per la settimana del @firstDay.Date.ToString("dd/MM")
+                </div>
+                <div class="ui content">
+                    <p>Stai inserendo un nuovo avviso per l'intera settimana. Inserisci il testo:</p>
+                    @using (Html.BeginForm("InsertWeekAlert", "Week", new { start = firstDay.Date.Date }, FormMethod.Post, new { id = "weekAlertForm", @class = "ui form" }))
+                    {
+                        <input type="hidden" name="alert.username" value="@loggeduser.username" />
+                        <input type="hidden" name="alert.data" value="@firstDay.Date.Date" />
+                        <input type="hidden" name="alert.severity" value="warning" />
+                        <input type="hidden" name="alert.weekly" value="1" />
+                        <textarea name="alert.message" placeholder="Inserisci un messaggio..."></textarea>
+                    }
+                </div>
+                <div class="ui actions">
+                    <button type="submit" onclick="loadAndSubmit(this, $('#weekAlertForm'));" class="ui green button">Inserisci</button>
+                    <button class="ui red cancel button">Annulla</button>
+                </div>
             </div>
         </div>
     </div>
-    <div class="ui sixteen wide column" style="padding-bottom:0px;">
-        <button class="ui blue labeled fluid compact icon button" style="margin-bottom:5px;" onclick="$('#popupAddWeekAlert').modal('show');">
-            <i class="ui plus icon"></i>
-            Avviso settimanale
-        </button>
 
-        <div class="ui modal" id="popupAddWeekAlert">
-            <div class="ui header">
-                Nuovo avviso per la settimana del @firstDay.Date.ToString("dd/MM")
-            </div>
-            <div class="ui content">
-                <p>Stai inserendo un nuovo avviso per l'intera settimana. Inserisci il testo:</p>
-                @using (Html.BeginForm("InsertWeekAlert", "Week", new { start = firstDay.Date.Date }, FormMethod.Post, new { id = "weekAlertForm", @class = "ui form" }))
-                {
-                    <input type="hidden" name="alert.username" value="@loggeduser.username" />
-                    <input type="hidden" name="alert.data" value="@firstDay.Date.Date" />
-                    <input type="hidden" name="alert.severity" value="warning" />
-                    <input type="hidden" name="alert.weekly" value="1" />
-                    <textarea name="alert.message" placeholder="Inserisci un messaggio..."></textarea>
-                }
-            </div>
-            <div class="ui actions">
-                <button type="submit" onclick="loadAndSubmit(this, $('#weekAlertForm'));" class="ui green button">Inserisci</button>
-                <button class="ui red cancel button">Annulla</button>
-            </div>
-        </div>
-    </div>
 
     <div class="ui sixteen wide column">
         @Html.Partial("AlertView", firstDay, new ViewDataDictionary { { "weekly", 1 } })
