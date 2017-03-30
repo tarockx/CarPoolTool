@@ -246,6 +246,9 @@ namespace CarPoolTool.Controllers
                 entities.Alerts.Add(alert);
                 entities.SaveChanges();
             }
+
+            CalendarHelper.UpdateGoogleCalendar(start, start.AddDays(1));
+
             return RedirectToAction("Week", new { start = start, skipAheadIfWeekend = false });
         }
 
@@ -268,6 +271,8 @@ namespace CarPoolTool.Controllers
                     entities.SaveChanges();
                 }
             }
+
+            CalendarHelper.UpdateGoogleCalendar(start, start.AddDays(1));
 
             return RedirectToAction("Week", new { start = start, skipAheadIfWeekend = false });
         }

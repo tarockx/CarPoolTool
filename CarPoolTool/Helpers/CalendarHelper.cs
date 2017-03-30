@@ -15,6 +15,18 @@ namespace CarPoolTool.Helpers
     {
         static private CalendarService service;
 
+        public static DateTime GetMonday(DateTime date, bool skipAheadIfWeekend)
+        {
+            bool weekend = date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
+
+            while (date.DayOfWeek != DayOfWeek.Monday)
+            {
+                date = weekend && skipAheadIfWeekend ? date.AddDays(1) : date.AddDays(-1);
+            }
+
+            return date.Date;
+        }
+
         private static void Init()
         {
             if(service == null)
@@ -95,6 +107,25 @@ namespace CarPoolTool.Helpers
                     body.Start = new EventDateTime() { Date = day.Date.Date.ToString("yyyy-MM-dd") };
                     body.End = new EventDateTime() { Date = day.Date.Date.AddDays(1).ToString("yyyy-MM-dd") };
                     tryExecuteEvent(service.Events.Insert(body, calId), 3);
+
+                    //Alerts
+                    foreach (var alert in day.Alerts)
+                    {
+                        Event alertEvent = new Event();
+                        alertEvent.Summary = "NOTA: " + alert.message;
+                        if(alert.weekly == 0)
+                        {
+                            alertEvent.Start = new EventDateTime() { Date = day.Date.Date.ToString("yyyy-MM-dd") };
+                            alertEvent.End = new EventDateTime() { Date = day.Date.Date.AddDays(1).ToString("yyyy-MM-dd") };
+                        }
+                        else
+                        {
+                            DateTime monday = GetMonday(day.Date, false);
+                            alertEvent.Start = new EventDateTime() { Date = monday.Date.ToString("yyyy-MM-dd") };
+                            alertEvent.End = new EventDateTime() { Date = monday.Date.AddDays(1).ToString("yyyy-MM-dd") };
+                        }
+                        tryExecuteEvent(service.Events.Insert(alertEvent, calId), 3);
+                    }
                 }
 
 
