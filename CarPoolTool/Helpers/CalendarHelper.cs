@@ -3,14 +3,10 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Services;
-using Google.Apis.Util.Store;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading;
-using System.Web;
 using System.Web.Hosting;
 
 namespace CarPoolTool.Helpers
@@ -64,7 +60,7 @@ namespace CarPoolTool.Helpers
                     {
                         if (calEvent.Creator.Email.Equals(serviceAccountEmail))
                         {
-                            service.Events.Delete(calId, calEvent.Id).Execute();
+                            tryExecuteEvent(service.Events.Delete(calId, calEvent.Id), 3);
                         }
                     }
                 }
@@ -98,7 +94,7 @@ namespace CarPoolTool.Helpers
                     body.Summary = summary;
                     body.Start = new EventDateTime() { Date = day.Date.Date.ToString("yyyy-MM-dd") };
                     body.End = new EventDateTime() { Date = day.Date.Date.AddDays(1).ToString("yyyy-MM-dd") };
-                    service.Events.Insert(body, calId).Execute();
+                    tryExecuteEvent(service.Events.Insert(body, calId), 3);
                 }
 
 
@@ -106,6 +102,30 @@ namespace CarPoolTool.Helpers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+        }
+
+        private static void tryExecuteEvent(EventsResource.DeleteRequest gEvent, int tries)
+        {
+            for (int i = 0; i < tries; i++)
+            {
+                try
+                {
+                    gEvent.Execute();
+                }
+                catch { };
+            }
+        }
+
+        private static void tryExecuteEvent(EventsResource.InsertRequest gEvent, int tries)
+        {
+            for (int i = 0; i < tries; i++)
+            {
+                try
+                {
+                    gEvent.Execute();
+                }
+                catch { };
             }
         }
     }
