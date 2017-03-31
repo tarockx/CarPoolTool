@@ -225,12 +225,15 @@ namespace CarPoolTool.Controllers
         {
             ViewBag.Section = ActiveSection.Week;
 
-                CarPoolToolEntities entities = new CarPoolToolEntities();
-                if (alert != null && alert.isValid())
-                {
-                    entities.Alerts.Add(alert);
-                    entities.SaveChanges();
-                }
+            CarPoolToolEntities entities = new CarPoolToolEntities();
+            if (alert != null && alert.isValid())
+            {
+                entities.Alerts.Add(alert);
+                entities.SaveChanges();
+            }
+
+            CalendarHelper.UpdateGoogleCalendar(start, start.AddDays(1));
+
             return RedirectToAction("Week", new { start = start, skipAheadIfWeekend = false });
         }
 
@@ -256,11 +259,6 @@ namespace CarPoolTool.Controllers
         public ActionResult DeleteAlert(DateTime start, int alertId)
         {
             ViewBag.Section = ActiveSection.Week;
-
-            if (start.DayOfWeek != DayOfWeek.Monday)
-            {
-                start = GetMonday(start, false);
-            }
 
             if(alertId > 0)
             {

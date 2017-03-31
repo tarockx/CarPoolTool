@@ -61,7 +61,7 @@ namespace CarPoolTool.Helpers
                 request.TimeMax = end;
                 request.ShowDeleted = false;
                 request.SingleEvents = true;
-                request.MaxResults = 10;
+                request.MaxResults = 50;
                 request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
 
                 // Remove old events
@@ -112,7 +112,7 @@ namespace CarPoolTool.Helpers
                     foreach (var alert in day.Alerts)
                     {
                         Event alertEvent = new Event();
-                        alertEvent.Summary = "NOTA: " + alert.message;
+                        alertEvent.Summary = "CPT ALERT: " + alert.message;
                         if(alert.weekly == 0)
                         {
                             alertEvent.Start = new EventDateTime() { Date = day.Date.Date.ToString("yyyy-MM-dd") };
@@ -122,7 +122,7 @@ namespace CarPoolTool.Helpers
                         {
                             DateTime monday = GetMonday(day.Date, false);
                             alertEvent.Start = new EventDateTime() { Date = monday.Date.ToString("yyyy-MM-dd") };
-                            alertEvent.End = new EventDateTime() { Date = monday.Date.AddDays(1).ToString("yyyy-MM-dd") };
+                            alertEvent.End = new EventDateTime() { Date = monday.Date.AddDays(5).ToString("yyyy-MM-dd") };
                         }
                         tryExecuteEvent(service.Events.Insert(alertEvent, calId), 3);
                     }
@@ -143,6 +143,7 @@ namespace CarPoolTool.Helpers
                 try
                 {
                     gEvent.Execute();
+                    return;
                 }
                 catch { };
             }
@@ -155,6 +156,7 @@ namespace CarPoolTool.Helpers
                 try
                 {
                     gEvent.Execute();
+                    return;
                 }
                 catch { };
             }
