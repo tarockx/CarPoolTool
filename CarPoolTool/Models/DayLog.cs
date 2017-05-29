@@ -11,6 +11,9 @@ namespace CarPoolTool.Models
         public Dictionary<User, UserStatus> Userdata { get; set; } = new Dictionary<User, UserStatus>();
 
         public IEnumerable<Alert> Alerts { get; set; }
+        public Holiday Holiday { get; set; }
+
+        public bool IsHoliday { get { return Holiday != null; } }
 
         public IEnumerable<Alert> WeeklyAlerts {
             get {

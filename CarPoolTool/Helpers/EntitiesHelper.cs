@@ -45,14 +45,24 @@ namespace CarPoolTool.Helpers
             }
 
 
-            //Load alerts
+            //Load alerts and holidays
             foreach (var daylog in week.Values)
             {
                 var alerts = from a in entities.Alerts
                              where a.data == daylog.Date
                              select a;
+
+                var holiday = (from h in entities.Holidays
+                             where h.data == daylog.Date
+                             select h).FirstOrDefault();
+
                 daylog.Alerts = alerts.ToList();
+                if(holiday != null)
+                {
+                    daylog.Holiday = holiday;
+                }
             }
+            
 
             return week.Values.OrderBy(x => x.Date);
         }

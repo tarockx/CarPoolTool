@@ -412,6 +412,9 @@
     <Compile Include="Models\DayLog.cs" />
     <Compile Include="Models\Extensions\Alert.cs" />
     <Compile Include="Models\Extensions\User.cs" />
+    <Compile Include="Models\Holiday.cs">
+      <DependentUpon>CarPoolToolModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Total.cs">
       <DependentUpon>CarPoolToolModel.tt</DependentUpon>
     </Compile>
