@@ -121,91 +121,133 @@
                                 <i class="red warning sign icon"></i>
                             }
 
-                            <i class="teal car icon"></i>
-                            @driverStr
+                            @if (day.IsHoliday)
+                            {
+                                <i class="violet star icon"></i>
+                                <text>Festa!</text>
+                            }
+                            else
+                            {
+                                <i class="teal car icon"></i>
+                                @driverStr
 
-                            <i class="blue road icon"></i>
-                            @day.GetByStatus(UserStatus.Passenger).Count.ToString()
+                                <i class="blue road icon"></i>
+                                @day.GetByStatus(UserStatus.Passenger).Count.ToString()
+                            }
                         </span>
                     </div>
 
                     <div class="@activeAttr content">
-                        <table class="ui unstackable definition table">
-                            <tbody>
-                                <!-- Guidatore -->
-                                <tr>
-                                    <td>
-                                        <i class="teal car icon"></i>
-                                    </td>
-                                    <td>
-                                        @driverStr
-                                    </td>
-                                </tr>
-
-                                <!-- Passeggeri -->
-                                <tr>
-                                    <td>
-                                        <i class="blue road icon"></i>
-                                    </td>
-                                    <td>
-                                        @passengersStr
-                                    </td>
-                                </tr>
-
-                                <!-- Consiglio dei dieci assenti -->
-                                <tr>
-                                    <td>
-                                        <i class="red remove user icon"></i>
-                                    </td>
-                                    <td>
-                                        @absentStr
-                                    </td>
-                                </tr>
-
-                                <!-- dispersi -->
-                                <tr>
-                                    <td>
-                                        <i class="gray help circle icon"></i>
-                                    </td>
-                                    <td>
-                                        @missingStr
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <!-- Messaggio non segnato -->
-                        @if (day.Userdata[loggeduser] == UserStatus.MissingData)
+                        @if (day.IsHoliday)
                         {
-                            <div class="ui icon yellow message hand-cursor" onclick="$('#@idPopupDayEdit').modal('show');">
+                            <div class="ui icon violet message">
                                 <i class="warning icon"></i>
                                 <div>
-                                    Non sei segnato per @day.Date.ToString("dddd"). Tocca per segnarti ora!
+                                    <div class="header">
+                                        Oggi è festa! Non vorrai andare a lavorare spero?
+                                    </div>
+                                    <p>
+                                        Motivo: @(day.Holiday.description != null ? day.Holiday.description : "N/A")
+                                    </p>
                                 </div>
                             </div>
                         }
                         else
                         {
-                            <div class="ui icon green message hand-cursor" onclick="$('#@idPopupDayEdit').modal('show');">
-                                <i class="info circle icon"></i>
-                                <div>
-                                    Sei segnato come <b>@Html.Partial("UserStatusView", day.Userdata[loggeduser])</b>. Tocca per modificare.
+                            <table class="ui unstackable definition table">
+                                <tbody>
+                                    <!-- Guidatore -->
+                                    <tr>
+                                        <td>
+                                            <i class="teal car icon"></i>
+                                        </td>
+                                        <td>
+                                            @driverStr
+                                        </td>
+                                    </tr>
+
+                                    <!-- Passeggeri -->
+                                    <tr>
+                                        <td>
+                                            <i class="blue road icon"></i>
+                                        </td>
+                                        <td>
+                                            @passengersStr
+                                        </td>
+                                    </tr>
+
+                                    <!-- Consiglio dei dieci assenti -->
+                                    <tr>
+                                        <td>
+                                            <i class="red remove user icon"></i>
+                                        </td>
+                                        <td>
+                                            @absentStr
+                                        </td>
+                                    </tr>
+
+                                    <!-- dispersi -->
+                                    <tr>
+                                        <td>
+                                            <i class="gray help circle icon"></i>
+                                        </td>
+                                        <td>
+                                            @missingStr
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <!-- Messaggio non segnato -->
+                            if (day.Userdata[loggeduser] == UserStatus.MissingData)
+                            {
+                                <div class="ui icon yellow message hand-cursor" onclick="$('#@idPopupDayEdit').modal('show');">
+                                    <i class="warning icon"></i>
+                                    <div>
+                                        Non sei segnato per @day.Date.ToString("dddd"). Tocca per segnarti ora!
+                                    </div>
                                 </div>
-                            </div>
+                            }
+                            else
+                            {
+                                <div class="ui icon green message hand-cursor" onclick="$('#@idPopupDayEdit').modal('show');">
+                                    <i class="info circle icon"></i>
+                                    <div>
+                                        Sei segnato come <b>@Html.Partial("UserStatusView", day.Userdata[loggeduser])</b>. Tocca per modificare.
+                                    </div>
+                                </div>
+                            }
                         }
+
 
                         @Html.Partial("AlertView", day, new ViewDataDictionary { { "weekly", 0 } })
 
-                        <div style="overflow:hidden;">
-                            <a class="ui blue labeled right floated icon button" style="margin-bottom:5px;" onclick="loadAndGo(this);" data-href="@Url.Action("DayEdit", new { day = day.Date })">
-                                <i class="ui edit icon"></i>
-                                Modifica giorno
-                            </a>
+                        <div style="text-align:right;">
+                            @if (day.IsHoliday)
+                            {
+                                <a class="ui violet icon button" style="margin-bottom:5px;" onclick="loadAndGo(this);" data-href="@Url.Action("DeleteHoliday", new { date = day.Date})">
+                                    <i class="ban icon"></i>
+                                    Reimposta come feriale :(
+                                </a>
+                            }
+                            else
+                            {
+                                <button class="ui violet icon button" style="margin-bottom:5px;" onclick="$('#@("popupAddHoliday" + i.ToString())').modal('show');">
+                                    <i class="ui star icon"></i>
+                                    Festivo
+                                </button>
 
-                            <button class="ui blue labeled right floated icon button" style="margin-bottom:5px;" onclick="$('#@("popupAddAlert" + i.ToString())').modal('show');">
-                                <i class="ui plus icon"></i>
-                                Aggiungi avviso
-                            </button>
+                                <a class="ui blue icon button" style="margin-bottom:5px;" onclick="loadAndGo(this);" data-href="@Url.Action("DayEdit", new { day = day.Date })">
+                                    <i class="ui edit icon"></i>
+                                    Modifica
+                                </a>
+
+                                <button class="ui blue icon button" style="margin-bottom:5px;" onclick="$('#@("popupAddAlert" + i.ToString())').modal('show');">
+                                    <i class="ui plus icon"></i>
+                                    Avviso
+                                </button>
+                            }
+
 
                             <div class="ui modal" id="@("popupAddAlert" + i.ToString())">
                                 <div class="ui header">
@@ -213,9 +255,9 @@
                                 </div>
                                 <div class="ui content">
                                     <p>Stai inserendo un nuovo avviso. Inserisci il testo:</p>
-                                    @using (Html.BeginForm("InsertAlert", "Week", new { start = day.Date}, FormMethod.Post, new { id = "alertForm" + i.ToString(), @class = "ui form" }))
+                                    @using (Html.BeginForm("InsertAlert", "Week", new { start = day.Date }, FormMethod.Post, new { id = "alertForm" + i.ToString(), @class = "ui form" }))
                                     {
-                                        <input type="hidden" name="alert.username" value="@loggeduser.username"/>
+                                        <input type="hidden" name="alert.username" value="@loggeduser.username" />
                                         <input type="hidden" name="alert.data" value="@day.Date.Date" />
                                         <input type="hidden" name="alert.severity" value="warning" />
                                         <input type="hidden" name="alert.weekly" value="0" />
@@ -224,6 +266,24 @@
                                 </div>
                                 <div class="ui actions">
                                     <button type="submit" onclick="loadAndSubmit(this, $('#@("alertForm" + i.ToString())'));" class="ui green button">Inserisci</button>
+                                    <button class="ui red cancel button">Annulla</button>
+                                </div>
+                            </div>
+
+                            <div class="ui modal" id="@("popupAddHoliday" + i.ToString())">
+                                <div class="ui header">
+                                    Segna @day.Date.ToString("dddd dd") come festivo.
+                                </div>
+                                <div class="ui content">
+                                    <p>Stai impostando questo giorno come festivo. Inserisci il motivo [opzionale]:</p>
+                                    @using (Html.BeginForm("InsertHoliday", "Week", FormMethod.Post, new { id = "holidayForm" + i.ToString(), @class = "ui form" }))
+                                    {
+                                        <input type="hidden" name="holiday.data" value="@day.Date.Date" />
+                                        <textarea name="holiday.description" placeholder="Motivo della festività..."></textarea>
+                                    }
+                                </div>
+                                <div class="ui actions">
+                                    <button type="submit" onclick="loadAndSubmit(this, $('#@("holidayForm" + i.ToString())'));" class="ui green button">Conferma</button>
                                     <button class="ui red cancel button">Annulla</button>
                                 </div>
                             </div>

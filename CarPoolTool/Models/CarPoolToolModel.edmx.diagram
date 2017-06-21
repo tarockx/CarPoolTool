@@ -11,6 +11,7 @@
         <AssociationConnector Association="CarPoolToolModel.FK_CarpoolLog_User" ManuallyRouted="false" />
         <EntityTypeShape EntityType="CarPoolToolModel.Alert" Width="1.5" PointX="5.625" PointY="4" />
         <AssociationConnector Association="CarPoolToolModel.FK_Alert_User" />
+        <EntityTypeShape EntityType="CarPoolToolModel.Holiday" Width="1.5" PointX="5.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

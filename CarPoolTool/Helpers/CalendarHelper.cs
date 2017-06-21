@@ -84,7 +84,15 @@ namespace CarPoolTool.Helpers
                     User driver = day.GetByStatus(UserStatus.Driver).FirstOrDefault();
                     List<User> absent = day.GetByStatus(UserStatus.Absent);
                     string summary = null;
-                    if(driver == null && absent != null && absent.Count == day.Userdata.Count)
+                    if (day.IsHoliday)
+                    {
+                        summary = "Oggi festa!";
+                        if(day.Holiday.description != null)
+                        {
+                            summary += " (" + day.Holiday.description + ")";
+                        }
+                    }
+                    else if(driver == null && absent != null && absent.Count == day.Userdata.Count)
                     {
                         //Tutti per i cazzi propri
                         summary = "CPT: Ognuno per i cazzi propri!";
@@ -122,7 +130,7 @@ namespace CarPoolTool.Helpers
                         {
                             DateTime monday = GetMonday(day.Date, false);
                             alertEvent.Start = new EventDateTime() { Date = monday.Date.ToString("yyyy-MM-dd") };
-                            alertEvent.End = new EventDateTime() { Date = monday.Date.AddDays(5).ToString("yyyy-MM-dd") };
+                            alertEvent.End = new EventDateTime() { Date = monday.Date.AddDays(1).ToString("yyyy-MM-dd") };
                         }
                         tryExecuteEvent(service.Events.Insert(alertEvent, calId), 3);
                     }

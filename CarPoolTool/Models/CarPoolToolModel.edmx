@@ -26,6 +26,13 @@
           <Property Name="driver" Type="smallint" />
           <Property Name="passenger" Type="smallint" />
         </EntityType>
+        <EntityType Name="Holidays">
+          <Key>
+            <PropertyRef Name="data" />
+          </Key>
+          <Property Name="data" Type="date" Nullable="false" />
+          <Property Name="description" Type="nvarchar" MaxLength="256" />
+        </EntityType>
         <EntityType Name="User">
           <Key>
             <PropertyRef Name="username" />
@@ -78,6 +85,7 @@ warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary ke
         <EntityContainer Name="CarPoolToolModelStoreContainer">
           <EntitySet Name="Alert" EntityType="Self.Alert" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CarpoolLog" EntityType="Self.CarpoolLog" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Holidays" EntityType="Self.Holidays" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Totals" EntityType="Self.Totals" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -165,6 +173,7 @@ warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary ke
             <End Role="User" EntitySet="Users" />
             <End Role="Alert" EntitySet="Alerts" />
           </AssociationSet>
+          <EntitySet Name="Holidays" EntityType="CarPoolToolModel.Holiday" />
         </EntityContainer>
         <EntityType Name="Alert">
           <Key>
@@ -190,6 +199,13 @@ warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary ke
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Holiday">
+          <Key>
+            <PropertyRef Name="data" />
+          </Key>
+          <Property Name="data" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="description" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -240,6 +256,14 @@ warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary ke
                 <ScalarProperty Name="message" ColumnName="message" />
                 <ScalarProperty Name="data" ColumnName="data" />
                 <ScalarProperty Name="username" ColumnName="username" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Holidays">
+            <EntityTypeMapping TypeName="CarPoolToolModel.Holiday">
+              <MappingFragment StoreEntitySet="Holidays">
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="data" ColumnName="data" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

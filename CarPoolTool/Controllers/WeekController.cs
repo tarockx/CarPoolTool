@@ -274,5 +274,55 @@ namespace CarPoolTool.Controllers
 
             return RedirectToAction("Week", new { start = start, skipAheadIfWeekend = false });
         }
+
+        [HttpPost]
+        public ActionResult InsertHoliday(Holiday holiday)
+        {
+            ViewBag.Section = ActiveSection.Week;
+
+            CarPoolToolEntities entities = new CarPoolToolEntities();
+            if (holiday != null)
+            {
+                //Segno festivo
+                entities.Holidays.Add(holiday);
+
+                //Rimuovo eventuali persone segnate
+                var log = from a in entities.CarpoolLogs
+                          where a.data == holiday.data
+                          select a;
+                if (log != null)
+                {
+                    entities.CarpoolLogs.RemoveRange(log);
+                }
+
+                entities.SaveChanges();
+
+                CalendarHelper.UpdateGoogleCalendar(holiday.data, holiday.data.AddDays(1));
+            }
+
+
+            return RedirectToAction("Week", new { start = holiday.data, skipAheadIfWeekend = false });
+        }
+
+        [HttpGet]
+        public ActionResult DeleteHoliday(DateTime date)
+        {
+            ViewBag.Section = ActiveSection.Week;
+
+            if (date != null)
+            {
+                CarPoolToolEntities entities = new CarPoolToolEntities();
+                var holiday = (from a in entities.Holidays where a.data == date select a).FirstOrDefault();
+                if (holiday != null)
+                {
+                    entities.Holidays.Remove(holiday);
+                    entities.SaveChanges();
+                }
+
+                CalendarHelper.UpdateGoogleCalendar(date, date.AddDays(1));
+            }
+
+            return RedirectToAction("Week", new { start = date, skipAheadIfWeekend = false });
+        }
     }
 }

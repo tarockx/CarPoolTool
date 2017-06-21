@@ -19,46 +19,57 @@
                     <i class="calendar icon"></i>
                     @day.Date.ToString("dddd dd/MM")
                 </h4>
-                <input type="hidden" name="weekdata[@i].Key" value="@day.Date.DayOfWeek"/>
-                <input type="hidden" name="weekdata[@i].Value.Date" value="@day.Date" />
-                <table class="ui unstackable definition table">
-                    <tbody>
-                        <!-- Guidatore -->
-                        <tr>
-                            <td style="width:30px;">
-                                <i class="teal car icon"></i>
-                            </td>
-                            <td style="padding:2px;">
-                                <select name="weekdata[@i].Value.Driver" data-index="@i" class="ui fluid dropdown driver-select">
-                                    <option value="">[nessuna selezione]</option>
-                                    @foreach (User user in users)
-                                    {
-                                        <option value="@user.username" @(day.Userdata[user].Equals(UserStatus.Driver) ? "selected=\"selected\"" : "")>@user.display_name</option>
-                                    }
-                                </select>
-                            </td>
-                        </tr>
+                if (day.IsHoliday)
+                {
+                    <div class="ui icon violet message" >
+                        <i class="star icon"></i>
+                        <div>
+                            <strong>Festivo</strong>: @(day.Holiday.description != null ? day.Holiday.description : "N/A")
+                        </div>
+                    </div>
+                }
+                else{
+                    <input type="hidden" name="weekdata[@i].Key" value="@day.Date.DayOfWeek"/>
+                    <input type="hidden" name="weekdata[@i].Value.Date" value="@day.Date" />
+                    <table class="ui unstackable definition table">
+                        <tbody>
+                            <!-- Guidatore -->
+                            <tr>
+                                <td style="width:30px;">
+                                    <i class="teal car icon"></i>
+                                </td>
+                                <td style="padding:2px;">
+                                    <select name="weekdata[@i].Value.Driver" data-index="@i" class="ui fluid dropdown driver-select">
+                                        <option value="">[nessuna selezione]</option>
+                                        @foreach (User user in users)
+                                        {
+                                            <option value="@user.username" @(day.Userdata[user].Equals(UserStatus.Driver) ? "selected=\"selected\"" : "")>@user.display_name</option>
+                                        }
+                                    </select>
+                                </td>
+                            </tr>
 
-                        <!-- Passeggeri -->
-                        <tr>
-                            <td style="width:30px;">
-                                <i class="blue road icon"></i>
-                            </td>
-                            <td style="padding:2px;">
-                                <select name="weekdata[@i].Value.Passengers" data-index="@i" multiple class="ui fluid dropdown passengers-select">
-                                    @foreach (User user in users)
-                                    {
-                                        <option value="@user.username"
-                                                @(day.Userdata[user].Equals(UserStatus.Passenger) || day.Userdata[user].Equals(UserStatus.MissingData) ? "selected=\"selected\"" : "")
-                                                @(day.Userdata[user].Equals(UserStatus.Driver) ? "disabled" : "")>
-                                            @user.display_name
-                                        </option>
-                                    }
-                                </select>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            <!-- Passeggeri -->
+                            <tr>
+                                <td style="width:30px;">
+                                    <i class="blue road icon"></i>
+                                </td>
+                                <td style="padding:2px;">
+                                    <select name="weekdata[@i].Value.Passengers" data-index="@i" multiple class="ui fluid dropdown passengers-select">
+                                        @foreach (User user in users)
+                                        {
+                                            <option value="@user.username"
+                                                    @(day.Userdata[user].Equals(UserStatus.Passenger) || day.Userdata[user].Equals(UserStatus.MissingData) ? "selected=\"selected\"" : "")
+                                                    @(day.Userdata[user].Equals(UserStatus.Driver) ? "disabled" : "")>
+                                                @user.display_name
+                                            </option>
+                                        }
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                }
             }
             <div class="ui checkbox">
                 @Html.CheckBox("updateGoogleCalendar", true)

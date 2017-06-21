@@ -29,5 +29,6 @@ namespace CarPoolTool.Models
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Total> Totals { get; set; }
         public virtual DbSet<Alert> Alerts { get; set; }
+        public virtual DbSet<Holiday> Holidays { get; set; }
     }
 }
