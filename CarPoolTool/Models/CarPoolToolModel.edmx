@@ -34,6 +34,7 @@
           <Property Name="password" Type="nvarchar" MaxLength="512" Nullable="false" />
           <Property Name="admin" Type="smallint" Nullable="false" />
           <Property Name="display_name" Type="nvarchar" MaxLength="50" />
+          <Property Name="active" Type="smallint" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -124,6 +125,7 @@ warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary ke
           <Property Name="display_name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="CarpoolLogs" Relationship="Self.FK_CarpoolLog_User" FromRole="User" ToRole="CarpoolLog" />
           <NavigationProperty Name="Alerts" Relationship="CarPoolToolModel.FK_Alert_User" FromRole="User" ToRole="Alert" />
+          <Property Name="active" Type="Int16" Nullable="false" />
         </EntityType>
         <EntityType Name="Total">
           <Key>
@@ -207,6 +209,7 @@ warning 6002: The table/view 'carpooltool.dbo.Totals' does not have a primary ke
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="CarPoolToolModel.User">
               <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="active" ColumnName="active" />
                 <ScalarProperty Name="username" ColumnName="username" />
                 <ScalarProperty Name="password" ColumnName="password" />
                 <ScalarProperty Name="admin" ColumnName="admin" />
