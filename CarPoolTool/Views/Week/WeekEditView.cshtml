@@ -43,7 +43,11 @@
                                         <option value="">[nessuna selezione]</option>
                                         @foreach (User user in users)
                                         {
-                                            <option value="@user.username" @(day.Userdata[user].Equals(UserStatus.Driver) ? "selected=\"selected\"" : "")>@user.display_name</option>
+                                            /* skip se l'utente è inattivo e non segnato */
+                                            if(!(day.Userdata[user].Equals(UserStatus.MissingData) && user.active == 0))
+                                            {
+                                                <option value="@user.username" @(day.Userdata[user].Equals(UserStatus.Driver) ? "selected=\"selected\"" : "")>@user.display_name</option>
+                                            }
                                         }
                                     </select>
                                 </td>
@@ -58,11 +62,14 @@
                                     <select name="weekdata[@i].Value.Passengers" data-index="@i" multiple class="ui fluid dropdown passengers-select">
                                         @foreach (User user in users)
                                         {
-                                            <option value="@user.username"
-                                                    @(day.Userdata[user].Equals(UserStatus.Passenger) || day.Userdata[user].Equals(UserStatus.MissingData) ? "selected=\"selected\"" : "")
-                                                    @(day.Userdata[user].Equals(UserStatus.Driver) ? "disabled" : "")>
-                                                @user.display_name
-                                            </option>
+                                            if (!(day.Userdata[user].Equals(UserStatus.MissingData) && user.active == 0))
+                                            {
+                                                <option value="@user.username"
+                                                        @(day.Userdata[user].Equals(UserStatus.Passenger) || day.Userdata[user].Equals(UserStatus.MissingData) ? "selected=\"selected\"" : "")
+                                                        @(day.Userdata[user].Equals(UserStatus.Driver) ? "disabled" : "")>
+                                                    @user.display_name
+                                                </option>
+                                            }
                                         }
                                     </select>
                                 </td>

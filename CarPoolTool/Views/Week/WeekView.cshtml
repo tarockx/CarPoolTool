@@ -141,7 +141,7 @@
                         @if (day.IsHoliday)
                         {
                             <div class="ui icon violet message">
-                                <i class="warning icon"></i>
+                                <i class="star icon"></i>
                                 <div>
                                     <div class="header">
                                         Oggi è festa! Non vorrai andare a lavorare spero?
@@ -197,9 +197,20 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            
+
                             <!-- Messaggio non segnato -->
-                            if (day.Userdata[loggeduser] == UserStatus.MissingData)
+                            if (day.Userdata[loggeduser].Equals(UserStatus.MissingData) && loggeduser.active == 0)
+                            {
+                                <div class="ui icon message">
+                                    <i class="warning icon"></i>
+                                    <div>
+                                        Attualmente il tuo account è impostato come inattivo (= non partecipante al car sharing).
+                                        <br />
+                                        Vai al <a href="@Url.Action("Index", "Account")">tuo account</a> per modificare questa impostazione.
+                                    </div>
+                                </div>
+                            }
+                            else if (day.Userdata[loggeduser] == UserStatus.MissingData)
                             {
                                 <div class="ui icon yellow message hand-cursor" onclick="$('#@idPopupDayEdit').modal('show');">
                                     <i class="warning icon"></i>

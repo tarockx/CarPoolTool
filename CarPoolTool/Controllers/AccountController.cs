@@ -1,4 +1,5 @@
-﻿using CarPoolTool.Models;
+﻿using CarPoolTool.Helpers;
+using CarPoolTool.Models;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
@@ -99,6 +100,15 @@ namespace CarPoolTool.Controllers
             var ctx = Request.GetOwinContext();
             var authenticationManager = ctx.Authentication;
             authenticationManager.SignOut();
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [Authorize]
+        public ActionResult SetActive(bool active)
+        {
+            EntitiesHelper.SetActive(GetCurrentUser(), active);
 
             return RedirectToAction("Index");
         }

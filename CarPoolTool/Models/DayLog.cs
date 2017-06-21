@@ -82,11 +82,11 @@ namespace CarPoolTool.Models
             }
         }
 
-        public void FillMissingUsers(IEnumerable<User> users, UserStatus status)
+        public void FillMissingUsers(IEnumerable<User> users, UserStatus status, bool skipInactive)
         {
             foreach (var item in users)
             {
-                if (!Userdata.ContainsKey(item))
+                if (!Userdata.ContainsKey(item) && (!skipInactive || item.active == 1))
                 {
                     Userdata[item] = status;
                 }

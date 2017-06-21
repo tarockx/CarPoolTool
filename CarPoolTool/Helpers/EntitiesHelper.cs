@@ -40,7 +40,7 @@ namespace CarPoolTool.Helpers
                 {
                     week[curDay] = new DayLog(curDay);
                 }
-                week[curDay].FillMissingUsers(users, UserStatus.MissingData);
+                week[curDay].FillMissingUsers(users, UserStatus.MissingData, false);
                 curDay = curDay.AddDays(1);
             }
 
@@ -80,7 +80,7 @@ namespace CarPoolTool.Helpers
             var users = entities.Users;
             if (fillStatus.HasValue)
             {
-                daylog.FillMissingUsers(users, fillStatus.Value);
+                daylog.FillMissingUsers(users, fillStatus.Value, true);
             }
 
             foreach (var user in users)
@@ -138,6 +138,16 @@ namespace CarPoolTool.Helpers
                 entities.SaveChanges();
             }
 
+        }
+
+
+        public static void SetActive(User user, bool active)
+        {
+            CarPoolToolEntities entities = new CarPoolToolEntities();
+            var current = (from u in entities.Users where u.username == user.username select u).FirstOrDefault();
+            current.active = (active ? (short)1 : (short)0);
+
+            entities.SaveChanges();
         }
     }
 }

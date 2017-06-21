@@ -9,6 +9,38 @@
 
 @Html.Partial("UserStatisticsView", Model)
 
+<h2>Stato account:</h2>
+@using (Html.BeginForm("SetActive", "Account", FormMethod.Post))
+{
+    if(Model.User.active == 0)
+    {
+        <input type="hidden" name="active" value="true" />
+        <div>
+            Il tuo account è <span style="color: red; font-weight:bold;">INATTIVO</span> (al momento non partecipi al car sharing)
+        </div>
+
+        <div>
+            <a class="ui green labeled icon button" onclick="loadAndSubmit(this, $(this).closest('form'));">
+                <i class="ui add user icon"></i>
+                Attiva account (partecipa al car sharing)
+            </a>
+        </div>
+    }
+    else
+    {
+        <input type="hidden" name="active" value="false" />
+        <div>
+            Il tuo account è <span style="color: green; font-weight:bold;">ATTIVO</span> (partecipi al car sharing)
+        </div>
+        <div>
+            <a class="ui red labeled icon button" onclick="loadAndSubmit(this, $(this).closest('form'));">
+                <i class="ui remove user icon"></i>
+                Sospendi partecipazione al car sharing
+            </a>
+        </div>
+    }
+}
+
 <h2>Non sei tu?</h2>
 <a class="ui red labeled icon button" href="@Url.Action("Logout", "Account")">
     <i class="ui sign out icon"></i>
